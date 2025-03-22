@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:smithing_transform",
+  "addition": {
+    "item": "minecraft:amethyst_shard"
+  },
+  "base": {
+    "item": "golams:golam"
+  },
+  "result": {
+    "id": "golams:golam",
+    "components": {
+      "golams:golam_profession": "blacksmith",
+      "custom_model_data": 1
+    }
+  },
+  "template": {
+    "item": "golams:golam_blacksmith_upgrade_template"
+  }
+}

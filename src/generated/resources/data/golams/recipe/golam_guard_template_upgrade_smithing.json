@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:smithing_transform",
+  "addition": {
+    "item": "minecraft:amethyst_shard"
+  },
+  "base": {
+    "item": "minecraft:shield"
+  },
+  "result": {
+    "count": 1,
+    "id": "golams:golam_guard_upgrade_template"
+  },
+  "template": {
+    "item": "golams:golam_upgrade_template"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "tooltip.golams.golam_profession": "Profession: %s",
+
+
+  "creativetab.golams.creative_tab_items": "Golams items",
+  "item.golams.template_upgrade_professions_items": "Smithing table, Spyglass, Chest & Shield",
+
+  "item.golams.golam": "Golam",
+  "item.golams.golam_core": "Golam Core",
+
+  "block.golams.golam_interface": "Golam Interface",
+
+  "entity.golams.golam": "Golam",
+
+  "interaction.golams.golam_core_assign_clear":"Block assignations cleared.",
+  "interaction.golams.golam_core_assign_step_1":"Golam selected ! Click on a %s to assign.",
+  "interaction.golams.golam_core_assign_step_2":"%s at (%s,%s,%s) with item %s."
+
+}

@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:smithing_transform",
+  "addition": {
+    "item": "minecraft:amethyst_shard"
+  },
+  "base": {
+    "item": "minecraft:smithing_table"
+  },
+  "result": {
+    "count": 1,
+    "id": "golams:golam_blacksmith_upgrade_template"
+  },
+  "template": {
+    "item": "golams:golam_upgrade_template"
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "parent": "minecraft:item/generated",
+  "overrides": [
+    {
+      "model": "golams:item/unassigned_golam",
+      "predicate": {
+        "minecraft:custom_model_data": 0.0
+      }
+    },
+    {
+      "model": "golams:item/blacksmith_golam",
+      "predicate": {
+        "minecraft:custom_model_data": 1.0
+      }
+    },
+    {
+      "model": "golams:item/cartographer_golam",
+      "predicate": {
+        "minecraft:custom_model_data": 2.0
+      }
+    },
+    {
+      "model": "golams:item/deliverer_golam",
+      "predicate": {
+        "minecraft:custom_model_data": 3.0
+      }
+    },
+    {
+      "model": "golams:item/guard_golam",
+      "predicate": {
+        "minecraft:custom_model_data": 4.0
+      }
+    }
+  ],
+  "textures": {
+    "layer0": "golams:item/golam_item"
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "golams:item/golam_deliverer_upgrade_template"
+  }
+}

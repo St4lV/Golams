@@ -1,0 +1,12 @@
+{
+  "variants": {
+
+    "facing=north": {"model": "golams:block/golam_interface", "x": -90 },
+    "facing=east": {"model": "golams:block/golam_interface", "x": -90,"y": 90 },
+    "facing=south": {"model": "golams:block/golam_interface", "x": -90,"y": 180 },
+    "facing=west": {"model": "golams:block/golam_interface", "x": -90,"y": 270 },
+    "facing=up": {"model": "golams:block/golam_interface", "x": 180,"y": 180 },
+    "facing=down": {"model": "golams:block/golam_interface"}
+
+  }
+}

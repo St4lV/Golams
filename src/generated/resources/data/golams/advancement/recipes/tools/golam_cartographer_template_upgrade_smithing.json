@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_golam_upgrade_template": {
+      "conditions": {
+        "items": [
+          {
+            "items": "golams:golam_upgrade_template"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "golams:golam_cartographer_template_upgrade_smithing"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_golam_upgrade_template"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "golams:golam_cartographer_template_upgrade_smithing"
+    ]
+  }
+}
