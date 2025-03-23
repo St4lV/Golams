@@ -46,6 +46,14 @@ _(System is quite simple, it could be improved in the future for more possibilit
 
 _(In the future it will able to be assigned to others Golams, following and defending you( or maybe an area with an assigned block ? ))_
 
+
+Downloads : 
+==========
+
+* Github : https://github.com/St4lV/Golams/releases
+
+*  Curseforge : https://www.curseforge.com/minecraft/mc-mods/golams
+
 Neoforge ressources : 
 ==========
 Community Documentation: https://docs.neoforged.net/  
