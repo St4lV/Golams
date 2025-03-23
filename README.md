@@ -1,7 +1,6 @@
 ![Golam icon](https://media.forgecdn.net/attachments/1134/778/basegolam-png.png)
 
 # Let's introduce ourselves to Golams :
-==========
 
 Golams are the hidden spirits of Geodes, made of a budding Amethyst, this creature grow constantly amethyst shard, making it able to use the amethyst growing out of it like members.
 
