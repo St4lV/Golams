@@ -6,6 +6,7 @@ import fr.st4lv.golams.entity.GolamProfessions;
 import fr.st4lv.golams.entity.golam_goals.FollowOtherGolamsGoal;
 import fr.st4lv.golams.entity.golam_goals.blacksmith.HealOtherGolamsGoal;
 import fr.st4lv.golams.entity.golam_goals.blacksmith.RestockSmoothBasaltGoal;
+import fr.st4lv.golams.entity.golam_goals.cartographer.ReachPoiGoal;
 import fr.st4lv.golams.entity.golam_goals.deliverer.DeliverItem;
 import fr.st4lv.golams.entity.golam_goals.deliverer.ExportItemGoal;
 import fr.st4lv.golams.entity.golam_goals.deliverer.InsertItemGoal;
@@ -45,10 +46,12 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.CustomModelData;
+import net.minecraft.world.item.component.MapDecorations;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.saveddata.maps.MapDecoration;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -75,6 +78,11 @@ public class GolamEntity extends AbstractGolem implements InventoryCarrier, Neut
     }
 
     @Override
+    protected int decreaseAirSupply(int currentAir) {
+        return super.decreaseAirSupply(0);
+    }
+
+    @Override
     protected void registerGoals() {
         // ALL
         this.goalSelector.addGoal(0, new FloatGoal(this));
@@ -93,6 +101,7 @@ public class GolamEntity extends AbstractGolem implements InventoryCarrier, Neut
                 this.goalSelector.addGoal(1, new RestockSmoothBasaltGoal(this, 1.0));
                 break;
             case CARTOGRAPHER:
+                this.goalSelector.addGoal(1, new ReachPoiGoal(this,1.0));
                 break;
             case DELIVERER:
                 this.goalSelector.addGoal(2, new ExportItemGoal(this, 1.0));
@@ -129,6 +138,7 @@ public class GolamEntity extends AbstractGolem implements InventoryCarrier, Neut
     public void resetRestockFlag() {
         this.needsRestocking = false;
     }
+
     private boolean shouldExport = false;
 
     public void requestExport() {
@@ -143,16 +153,28 @@ public class GolamEntity extends AbstractGolem implements InventoryCarrier, Neut
         this.shouldExport = false;
     }
 
+    private boolean shouldReachPoi = false;
+
+    public void ReachPoi() {
+        this.shouldReachPoi = true;
+    }
+
+    public boolean shouldReachPoi() {
+        return shouldReachPoi;
+    }
+
+    public void resetReachPoi() {
+        this.shouldReachPoi = false;
+    }
+
     public BlockPos findAssignedItemGolamInterface(Item item) {
         for (AssignedBlock ab : assignedBlocks) {
             if (ab.getItem() == item) {
                 BlockPos pos = ab.getBlockPos();
                 BlockEntity be = this.level().getBlockEntity(pos);
                 if (be instanceof GolamInterfaceBE interfaceBE) {
-                    System.out.println(interfaceBE + " | " + interfaceBE.inventory.getStackInSlot(0) + " | " + item);
                     ItemStack slot0 = interfaceBE.inventory.getStackInSlot(0);
                     if (slot0.getItem() == item ) {
-                        System.out.println(pos);
                         return pos;
                     }
                 }
@@ -160,6 +182,11 @@ public class GolamEntity extends AbstractGolem implements InventoryCarrier, Neut
         }
         return null;
     }
+
+    public List<AssignedBlock> getAssignedBlocks() {
+        return this.assignedBlocks;
+    }
+
 
     public void addAssignedBlock(BlockPos blockPos, Item item) {
         for (int i = 0; i < assignedBlocks.size(); i++) {
@@ -172,13 +199,38 @@ public class GolamEntity extends AbstractGolem implements InventoryCarrier, Neut
         assignedBlocks.add(new AssignedBlock(blockPos, item));
     }
 
-
-
     public void resetAssignedBlock(){
         assignedBlocks.clear();
     }
 
-    public void applyDynamicHealthModifier(LivingEntity entity) {
+
+    public String getMapPOI() {
+        if (getTypeVariant() != GolamProfessions.CARTOGRAPHER) {
+            return null;
+        }
+
+        ItemStack mapStack = getItemBySlot(EquipmentSlot.OFFHAND);
+        if (mapStack.getItem() != Items.FILLED_MAP || !mapStack.has(DataComponents.MAP_DECORATIONS)) {
+            return null;
+        }
+
+        MapDecorations decorations = mapStack.get(DataComponents.MAP_DECORATIONS);
+        if (decorations == null) {
+            return null;
+        }
+        MapDecorations.Entry entry = decorations.decorations().values().iterator().next();
+
+        int x = (int) entry.x();
+        int z = (int) entry.z();
+        String poiType = entry.type().getRegisteredName();
+
+        BlockPos poiPos = new BlockPos(x, 64, z);
+        addAssignedBlock(poiPos, mapStack.getItem());
+        ReachPoi();
+        return poiType;
+    }
+
+    public void applyDynamicHealthModifier(Mob entity) {
         if (entity != null && entity.isAlive()) {
             AttributeInstance healthAttribute = Objects.requireNonNull(entity.getAttribute(Attributes.MAX_HEALTH));
             ResourceLocation modifierId = ResourceLocation.withDefaultNamespace("health");
@@ -194,13 +246,13 @@ public class GolamEntity extends AbstractGolem implements InventoryCarrier, Neut
         }
     }
 
-
     public static AttributeSupplier.Builder createAttributes() {
-        return Animal.createLivingAttributes()
+        return Mob.createMobAttributes()
                 .add(Attributes.MAX_HEALTH, 10d)
                 .add(Attributes.MOVEMENT_SPEED, 0.25D)
                 .add(Attributes.FOLLOW_RANGE, 24D)
-                .add(Attributes.ATTACK_DAMAGE,5.0f);
+                .add(Attributes.ATTACK_DAMAGE,5.0f)
+                .add(Attributes.STEP_HEIGHT,1.0);
 
     }
 
@@ -251,8 +303,6 @@ public class GolamEntity extends AbstractGolem implements InventoryCarrier, Neut
 
         assignedBlocks.clear();
         ListTag assignedBlocksTag = compound.getList("assigned_blocks", Tag.TAG_COMPOUND);
-        System.out.println("Loading assignedBlocks, size in NBT: " + assignedBlocksTag.size());
-
         for (Tag tag : assignedBlocksTag) {
             if (tag instanceof CompoundTag blockTag) {
                 int x = blockTag.getInt("x");
@@ -260,9 +310,6 @@ public class GolamEntity extends AbstractGolem implements InventoryCarrier, Neut
                 int z = blockTag.getInt("z");
                 BlockPos pos = new BlockPos(x, y, z);
                 Item item = BuiltInRegistries.ITEM.get(ResourceLocation.parse(blockTag.getString("item")));
-                String itemKey = blockTag.getString("item");
-                System.out.println("Loading item: " + itemKey);
-
                 assignedBlocks.add(new AssignedBlock(pos, item));
             }
         }
@@ -290,14 +337,15 @@ public class GolamEntity extends AbstractGolem implements InventoryCarrier, Neut
     }
 
     protected InteractionResult mobInteract(Player player, InteractionHand hand) {
-        ItemStack itemstack = player.getItemInHand(hand);
+        ItemStack itemstack = player.getItemBySlot(EquipmentSlot.MAINHAND);
+
         if (itemstack.is(Items.REDSTONE) && player.isCreative()) {
             GolamProfessions current = getTypeVariant();
             GolamProfessions next = GolamProfessions.byId((current.getId() + 1) % GolamProfessions.values().length);
-
             this.setVariant(next);
             updateGoals();
             return InteractionResult.sidedSuccess(this.level().isClientSide);
+
         } else if (itemstack.is(Items.SMOOTH_BASALT)) {
             float maxH = getMaxHealth();
             float actH = getHealth();
@@ -313,6 +361,27 @@ public class GolamEntity extends AbstractGolem implements InventoryCarrier, Neut
 
                 return InteractionResult.sidedSuccess(this.level().isClientSide);
             }
+        } else if (itemstack.is(Items.AIR)) {
+            ItemStack golamItem = getItemBySlot(EquipmentSlot.OFFHAND);
+            if (!golamItem.isEmpty()) {
+                ItemStack item = golamItem.copyWithCount(1);
+                player.setItemSlot(EquipmentSlot.MAINHAND, item);
+                golamItem.shrink(1);
+                return InteractionResult.SUCCESS;
+            }
+            return InteractionResult.PASS;
+
+
+        } else if (itemstack.is(Items.FILLED_MAP) && getTypeVariant()==GolamProfessions.CARTOGRAPHER) {
+
+            ItemStack golamItem = getItemBySlot(EquipmentSlot.OFFHAND);
+            if (golamItem.isEmpty()) {
+
+                setItemSlot(EquipmentSlot.OFFHAND, itemstack.copyWithCount(1));
+                itemstack.shrink(1);
+                return InteractionResult.SUCCESS;
+            }
+            return InteractionResult.PASS;
         }/* else if (itemstack.is(Items.AMETHYST_SHARD)) {
             switch (getTypeVariant()) {
                 case BLACKSMITH :

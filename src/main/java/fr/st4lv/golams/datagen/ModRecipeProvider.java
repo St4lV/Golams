@@ -29,10 +29,10 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
 
         SmithingTransformRecipeBuilder.smithing(
                         Ingredient.of(Items.SMOOTH_BASALT),
-                        Ingredient.of(ModItems.GOLAM_CORE),
+                        Ingredient.of(Items.CALCITE),
                         Ingredient.of(Items.AMETHYST_SHARD),
                         RecipeCategory.TOOLS,
-                        ModItems.GOLAM_UPGRADE_TEMPLATE.get()
+                        ModItems.GOLAM_CORE.get()
                 ).unlocks("has_golam_core", has(ModItems.GOLAM_CORE.get()))
                 .save(recipeOutput, ResourceLocation.fromNamespaceAndPath("golams", "golam_core"));
 

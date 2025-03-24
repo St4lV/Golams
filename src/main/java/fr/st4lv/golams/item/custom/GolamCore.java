@@ -6,12 +6,15 @@ import fr.st4lv.golams.entity.ModEntities;
 import fr.st4lv.golams.entity.custom.GolamEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
@@ -23,6 +26,7 @@ import java.util.Objects;
 
 public class GolamCore extends Item {
     private static GolamEntity selectedGolam = null;
+    private boolean blockSelected = false;
     public GolamCore(Properties properties) {
         super(properties);
     }
@@ -31,15 +35,34 @@ public class GolamCore extends Item {
         if (entity instanceof GolamEntity golam) {
             selectedGolam = golam;
             if (player.isShiftKeyDown()){
+                blockSelected=false;
                 golam.resetAssignedBlock();
                 player.displayClientMessage(Component.translatable("interaction.golams.golam_core_assign_clear"), true);
-                selectedGolam.updateGoals();
-                return InteractionResult.SUCCESS;
             } else {
-                player.displayClientMessage(Component.translatable("interaction.golams.golam_core_assign_step_1",Component.translatable("block.golams.golam_interface")), true);
-                selectedGolam.updateGoals();
-                return InteractionResult.SUCCESS;
+                switch (golam.getTypeVariant()) {
+                    case CARTOGRAPHER:
+                        if (golam.getItemBySlot(EquipmentSlot.OFFHAND).getItem() == Items.FILLED_MAP){
+                            String poi = golam.getMapPOI();
+                            if (poi!=null) {
+                                player.displayClientMessage(Component.translatable("interaction.golams.golam_core_cartographer_valid_poi",poi), true);
+                            } else {
+                                player.displayClientMessage(Component.translatable("interaction.golams.golam_core_cartographer_no_poi"), true);
+                            }
+                        } else {
+                            player.displayClientMessage(Component.translatable("interaction.golams.golam_core_cartographer_no_filled_map",Component.translatable("item.minecraft.filled_map")),true);
+                            break;
+                        }
+                        break;
+                    case GUARD:
+                        return InteractionResult.SUCCESS;
+                    default:
+                        player.displayClientMessage(Component.translatable("interaction.golams.golam_core_assign_step_1",Component.translatable("block.golams.golam_interface")), true);
+                        blockSelected=true;
+                        break;
+                }
             }
+            selectedGolam.updateGoals();
+            return InteractionResult.SUCCESS;
         }
         return super.interactLivingEntity(stack, player, entity, hand);
     }
@@ -56,28 +79,26 @@ public class GolamCore extends Item {
             BlockEntity be = level.getBlockEntity(pos);
 
             if (selectedGolam != null && player!=null ) {
+                if (!blockSelected) return InteractionResult.PASS;
+                if (be instanceof GolamInterfaceBE golamInterface) {
+                    Item item = golamInterface.inventory.getStackInSlot(0).getItem();
+                    selectedGolam.addAssignedBlock(pos, item);
+                    selectedGolam.updateGoals();
+                    selectedGolam = null;
 
-                    if (be instanceof GolamInterfaceBE golamInterface) {
-                        Item item = golamInterface.inventory.getStackInSlot(0).getItem();
-                        selectedGolam.addAssignedBlock(pos, item);
-                        selectedGolam.updateGoals();
-                        selectedGolam = null;
-
-                        int pos_x= pos.getX();
-                        int pos_y= pos.getY();
-                        int pos_z= pos.getZ();
-
+                    player.displayClientMessage(Component.translatable(
+                            "interaction.golams.golam_core_assign_step_2",
+                            Component.translatable("block.golams.golam_interface"),
+                            String.valueOf(pos.getX()),
+                            String.valueOf(pos.getY()),
+                            String.valueOf(pos.getZ()),
+                            ((GolamInterfaceBE) be).inventory.getStackInSlot(0).getItem().getDescription()
+                    ), true);
 
 
-                        player.displayClientMessage(Component.translatable("interaction.golams.golam_core_assign_step_2",
-                                Component.translatable("block.golams.golam_interface"),
-                                pos_x,pos_y,pos_z,
-                                ((GolamInterfaceBE) be).inventory.getStackInSlot(0).getItem()),
-                                true);
-
-                        return InteractionResult.SUCCESS;
+                    return InteractionResult.SUCCESS;
+                    }
                 }
-            }
 
             if (state.is(Blocks.BUDDING_AMETHYST)) {
                 level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
@@ -88,9 +109,9 @@ public class GolamCore extends Item {
 
                 level.addFreshEntity(newGolam);
 
-                if (player != null) {
+                /*if (player != null) {
                     //player.displayClientMessage(Component.translatable("!"), true);
-                }
+                }*/
                 Objects.requireNonNull(player).getInventory().removeItem(stack);
                 return InteractionResult.CONSUME;
             }

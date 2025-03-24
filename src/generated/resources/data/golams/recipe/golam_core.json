@@ -4,11 +4,11 @@
     "item": "minecraft:amethyst_shard"
   },
   "base": {
-    "item": "golams:golam_core"
+    "item": "minecraft:calcite"
   },
   "result": {
     "count": 1,
-    "id": "golams:golam_upgrade_template"
+    "id": "golams:golam_core"
   },
   "template": {
     "item": "minecraft:smooth_basalt"
