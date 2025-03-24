@@ -40,6 +40,9 @@ public class GolamCore extends Item {
                 player.displayClientMessage(Component.translatable("interaction.golams.golam_core_assign_clear"), true);
             } else {
                 switch (golam.getTypeVariant()) {
+                    case UNASSIGNED:
+                        player.displayClientMessage(Component.translatable("interaction.golams.golam_core_unassigned_needs_job"), true);
+                        return InteractionResult.SUCCESS;
                     case CARTOGRAPHER:
                         if (golam.getItemBySlot(EquipmentSlot.OFFHAND).getItem() == Items.FILLED_MAP){
                             String poi = golam.getMapPOI();
@@ -83,6 +86,7 @@ public class GolamCore extends Item {
                 if (be instanceof GolamInterfaceBE golamInterface) {
                     Item item = golamInterface.inventory.getStackInSlot(0).getItem();
                     selectedGolam.addAssignedBlock(pos, item);
+                    golamInterface.addAssignedGolams(selectedGolam.getUUID());
                     selectedGolam.updateGoals();
                     selectedGolam = null;
 

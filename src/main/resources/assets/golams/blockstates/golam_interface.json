@@ -1,12 +1,17 @@
 {
   "variants": {
+    "facing=north,powered=false": { "model": "golams:block/golam_interface", "x": -90 },
+    "facing=east,powered=false": { "model": "golams:block/golam_interface", "x": -90, "y": 90 },
+    "facing=south,powered=false": { "model": "golams:block/golam_interface", "x": -90, "y": 180 },
+    "facing=west,powered=false": { "model": "golams:block/golam_interface", "x": -90, "y": 270 },
+    "facing=up,powered=false": { "model": "golams:block/golam_interface", "x": 180, "y": 180 },
+    "facing=down,powered=false": { "model": "golams:block/golam_interface" },
 
-    "facing=north": {"model": "golams:block/golam_interface", "x": -90 },
-    "facing=east": {"model": "golams:block/golam_interface", "x": -90,"y": 90 },
-    "facing=south": {"model": "golams:block/golam_interface", "x": -90,"y": 180 },
-    "facing=west": {"model": "golams:block/golam_interface", "x": -90,"y": 270 },
-    "facing=up": {"model": "golams:block/golam_interface", "x": 180,"y": 180 },
-    "facing=down": {"model": "golams:block/golam_interface"}
-
+    "facing=north,powered=true": { "model": "golams:block/golam_interface_powered", "x": -90 },
+    "facing=east,powered=true": { "model": "golams:block/golam_interface_powered", "x": -90, "y": 90 },
+    "facing=south,powered=true": { "model": "golams:block/golam_interface_powered", "x": -90, "y": 180 },
+    "facing=west,powered=true": { "model": "golams:block/golam_interface_powered", "x": -90, "y": 270 },
+    "facing=up,powered=true": { "model": "golams:block/golam_interface_powered", "x": 180, "y": 180 },
+    "facing=down,powered=true": { "model": "golams:block/golam_interface_powered" }
   }
 }

@@ -1,7 +1,6 @@
 package fr.st4lv.golams;
 
 import fr.st4lv.golams.block.ModBlocks;
-import fr.st4lv.golams.block.entity.GolamInterfaceBE;
 import fr.st4lv.golams.block.entity.ModBlockEntities;
 import fr.st4lv.golams.block.entity.renderer.GolamInterfaceBERenderer;
 import fr.st4lv.golams.data_component.ModDataComponents;
@@ -11,7 +10,6 @@ import fr.st4lv.golams.entity.client.GolamRenderer;
 
 import fr.st4lv.golams.item.ModCreativeModeTabs;
 import fr.st4lv.golams.item.ModItems;
-import fr.st4lv.golams.item.custom.GolamItem;
 import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.neoforged.fml.ModLoadingContext;

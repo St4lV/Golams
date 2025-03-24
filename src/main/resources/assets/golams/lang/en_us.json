@@ -11,7 +11,7 @@
   "block.golams.golam_interface": "Golam Interface",
 
   "entity.golams.golam": "Golam",
-
+  "interaction.golams.golam_core_unassigned_needs_job": "This Golam needs to have a job to be configured",
   "interaction.golams.golam_core_assign_clear":"Block assignations cleared.",
   "interaction.golams.golam_core_assign_step_1":"Golam selected ! Click on a %s to assign.",
   "interaction.golams.golam_core_assign_step_2":"%s at (%s,%s,%s) with item %s.",

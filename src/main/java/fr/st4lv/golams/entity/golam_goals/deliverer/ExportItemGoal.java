@@ -28,9 +28,8 @@ public class ExportItemGoal extends Goal {
 
     @Override
     public boolean canUse() {
-        if (!entity.getInventory().getItem(0).isEmpty()) {
-            return false;
-        }
+        if (!entity.shouldExport()) return false;
+        if (!entity.getInventory().getItem(0).isEmpty()) return false;
         if (cooldown > 0) {
             cooldown--;
             return false;
@@ -60,6 +59,11 @@ public class ExportItemGoal extends Goal {
 
     @Override
     public void tick() {
+        if (!entity.shouldExport()){
+            entity.resetExportFlag();
+            cooldown = 80;
+            return;
+        }
         if (targetBlock == null) return;
         if (!entity.getInventory().isEmpty()) {
             return;
@@ -79,7 +83,11 @@ public class ExportItemGoal extends Goal {
         Container chest = interfaceBE.getLinkedChest();
         if (chest == null) return;
         if (chest instanceof ChestBlockEntity chestEntity) chest = getChestContainer(chestEntity);
-
+        if (chest.isEmpty()) {
+            entity.resetExportFlag();
+            cooldown = 80;
+            return;
+        }
         for (int i = 0; i < chest.getContainerSize(); i++) {
             ItemStack chestStack = chest.getItem(i);
             if (!chestStack.isEmpty()) {
@@ -105,6 +113,7 @@ public class ExportItemGoal extends Goal {
                     break;
             }
         }
+        entity.resetExportFlag();
         cooldown = 80;
     }
 
