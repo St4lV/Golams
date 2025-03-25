@@ -1,5 +1,6 @@
 package fr.st4lv.golams.datagen;
 
+import fr.st4lv.golams.block.ModBlocks;
 import fr.st4lv.golams.item.ModItems;
 import net.minecraft.core.HolderLookup;
 
@@ -33,7 +34,7 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                         Ingredient.of(Items.AMETHYST_SHARD),
                         RecipeCategory.TOOLS,
                         ModItems.GOLAM_CORE.get()
-                ).unlocks("has_golam_core", has(ModItems.GOLAM_CORE.get()))
+                ).unlocks("has_amethyst_shard", has(Items.AMETHYST_SHARD))
                 .save(recipeOutput, ResourceLocation.fromNamespaceAndPath("golams", "golam_core"));
 
         //TEMPLATE
@@ -44,7 +45,7 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                         Ingredient.of(Items.AMETHYST_SHARD),
                         RecipeCategory.TOOLS,
                         ModItems.GOLAM_UPGRADE_TEMPLATE.get()
-                ).unlocks("has_golam_upgrade_template", has(ModItems.GOLAM_UPGRADE_TEMPLATE.get()))
+                ).unlocks("has_golam_core", has(ModItems.GOLAM_CORE.get()))
                 .save(recipeOutput, ResourceLocation.fromNamespaceAndPath("golams", "golam_template_upgrade_smithing"));
 
         //PROFESSION TEMPLATES: SMITHING
@@ -86,7 +87,19 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                 ).unlocks("has_golam_upgrade_template", has(ModItems.GOLAM_UPGRADE_TEMPLATE.get()))
                 .save(recipeOutput, ResourceLocation.fromNamespaceAndPath("golams", "golam_guard_template_upgrade_smithing"));
 
+        // GOLAM INTERFACE
 
-        }
+        SmithingTransformRecipeBuilder.smithing(
+                        Ingredient.of(Items.ITEM_FRAME),
+                        Ingredient.of(ModItems.GOLAM_CORE),
+                        Ingredient.of(Items.REDSTONE),
+                        RecipeCategory.REDSTONE,
+                        ModBlocks.GOLAM_INTERFACE.asItem()
+                ).unlocks("has_golam_core", has(ModItems.GOLAM_CORE.get()))
+                .save(recipeOutput, ResourceLocation.fromNamespaceAndPath("golams", "golam_interface"));
+
+
+    }
+
 
 }

@@ -5,13 +5,11 @@ import fr.st4lv.golams.entity.custom.GolamEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
 import net.minecraft.world.Containers;
 import net.minecraft.world.MenuProvider;
@@ -20,9 +18,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.ChestBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -186,8 +182,10 @@ public class GolamInterfaceBE extends BlockEntity implements MenuProvider {
         Level level = chestEntity.getLevel();
         BlockState state = chestEntity.getBlockState();
 
-        if (state.getBlock() instanceof ChestBlock chestBlock)
+        if (state.getBlock() instanceof ChestBlock chestBlock) {
+            assert level != null;
             return ChestBlock.getContainer(chestBlock, state, level, chestEntity.getBlockPos(), true);
+        }
         return chestEntity;
     }
 
@@ -202,7 +200,7 @@ public class GolamInterfaceBE extends BlockEntity implements MenuProvider {
             for (int i = 0; i < blockEntity.getAssignedGolams().size(); i++) {
                 AssignedGolams ag = blockEntity.getAssignedGolams().get(i);
                 UUID golamUUID = ag.getGolamUuid();
-                for (Entity entity : blockEntity.getLevel().getEntities(null, new AABB(blockEntity.getBlockPos()).inflate(100))) {
+                for (Entity entity : Objects.requireNonNull(blockEntity.getLevel()).getEntities(null, new AABB(blockEntity.getBlockPos()).inflate(100))) {
                     if (entity instanceof GolamEntity golam && entity.getUUID().equals(golamUUID)) {
                         golam.requestExport();
                     }
@@ -213,5 +211,4 @@ public class GolamInterfaceBE extends BlockEntity implements MenuProvider {
 public boolean interfaceEmtpy() {
     return this.inventory.getStackInSlot(0).isEmpty();
 }
-
 }

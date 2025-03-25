@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:smithing_transform",
+  "addition": {
+    "item": "minecraft:redstone"
+  },
+  "base": {
+    "item": "golams:golam_core"
+  },
+  "result": {
+    "count": 1,
+    "id": "golams:golam_interface"
+  },
+  "template": {
+    "item": "minecraft:item_frame"
+  }
+}

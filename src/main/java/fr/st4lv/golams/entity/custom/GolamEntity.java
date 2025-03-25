@@ -444,6 +444,7 @@ public class GolamEntity extends AbstractGolem implements InventoryCarrier, Neut
                 if (!player.getInventory().add(stack)) {
                     player.drop(stack, false);
                 }
+                beforeDespawn();
                 this.discard();
                 return true;
             }
@@ -558,6 +559,38 @@ public class GolamEntity extends AbstractGolem implements InventoryCarrier, Neut
     public SlotAccess getSlot(int slot) {
         int i = slot - 300;
         return i >= 0 && i < this.inventory.getContainerSize() ? SlotAccess.forContainer(this.inventory, i) : super.getSlot(slot);
+    }
+    public void beforeDespawn(){
+        if (!this.level().isClientSide) {
+            dropAllItems();
+        }
+        for (AssignedBlock ab : assignedBlocks) {
+                BlockPos pos = ab.getBlockPos();
+                BlockEntity be = this.level().getBlockEntity(pos);
+                if (be instanceof GolamInterfaceBE interfaceBE) {
+                    interfaceBE.removeAssignedGolam(this.getUUID());
+                }
+        }
+    }
+    private void dropAllItems() {
+        if (this.level().isClientSide) return;
+        SimpleContainer inventory = getInventory();
+        if (inventory != null) {
+            for (int i = 0; i < inventory.getContainerSize(); i++) {
+                ItemStack stack = inventory.getItem(i);
+                if (!stack.isEmpty()) {
+                    spawnAtLocation(stack);
+                    inventory.setItem(i, ItemStack.EMPTY);
+                }
+            }
+        }
+        for (EquipmentSlot slot : EquipmentSlot.values()) {
+            ItemStack stack = this.getItemBySlot(slot);
+            if (!stack.isEmpty()) {
+                spawnAtLocation(stack);
+                this.setItemSlot(slot, ItemStack.EMPTY);
+            }
+        }
     }
 
 }

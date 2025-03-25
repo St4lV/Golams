@@ -1,11 +1,11 @@
 {
   "parent": "minecraft:recipes/root",
   "criteria": {
-    "has_amethyst_shard": {
+    "has_golam_core": {
       "conditions": {
         "items": [
           {
-            "items": "minecraft:amethyst_shard"
+            "items": "golams:golam_core"
           }
         ]
       },
@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "golams:golam_core"
+        "recipe": "golams:golam_interface"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -21,12 +21,12 @@
   "requirements": [
     [
       "has_the_recipe",
-      "has_amethyst_shard"
+      "has_golam_core"
     ]
   ],
   "rewards": {
     "recipes": [
-      "golams:golam_core"
+      "golams:golam_interface"
     ]
   }
 }

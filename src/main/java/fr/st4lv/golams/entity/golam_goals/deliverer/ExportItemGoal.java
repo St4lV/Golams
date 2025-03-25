@@ -90,7 +90,7 @@ public class ExportItemGoal extends Goal {
         }
         for (int i = 0; i < chest.getContainerSize(); i++) {
             ItemStack chestStack = chest.getItem(i);
-            if (!chestStack.isEmpty()) {
+            if (!chestStack.isEmpty() && entity.findAssignedItemGolamInterface(chestStack.getItem())!=null) {
                 if (entity.getInventory().getItem(0).isEmpty()) {
                     int maxStack = chestStack.getMaxStackSize();
                     int toTake = Math.min(chestStack.getCount(), maxStack);
