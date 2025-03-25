@@ -21,13 +21,6 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
     @Override
     protected void buildRecipes(RecipeOutput recipeOutput) {
 
-        generateSmithingRecipes(recipeOutput);
-
-
-    }
-    private void generateSmithingRecipes(RecipeOutput recipeOutput) {
-
-
         SmithingTransformRecipeBuilder.smithing(
                         Ingredient.of(Items.SMOOTH_BASALT),
                         Ingredient.of(Items.CALCITE),

@@ -560,6 +560,13 @@ public class GolamEntity extends AbstractGolem implements InventoryCarrier, Neut
         int i = slot - 300;
         return i >= 0 && i < this.inventory.getContainerSize() ? SlotAccess.forContainer(this.inventory, i) : super.getSlot(slot);
     }
+
+    @Override
+    public void die(DamageSource damageSource) {
+        beforeDespawn();
+        super.die(damageSource);
+    }
+
     public void beforeDespawn(){
         if (!this.level().isClientSide) {
             dropAllItems();
