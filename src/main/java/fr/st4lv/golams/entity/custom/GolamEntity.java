@@ -212,7 +212,7 @@ public class GolamEntity extends AbstractGolem implements InventoryCarrier, Neut
         }
 
         MapDecorations decorations = mapStack.get(DataComponents.MAP_DECORATIONS);
-        if (decorations == null) {
+        if (decorations == null || decorations.decorations().isEmpty()) {
             return null;
         }
         MapDecorations.Entry entry = decorations.decorations().values().iterator().next();
