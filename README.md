@@ -1,6 +1,6 @@
 ![Golam icon](https://media.forgecdn.net/attachments/1134/778/basegolam-png.png)
 
-# Let's introduce ourselves to Golams :
+# Let's introduce ourselves to Golams !
 
 Golams are the hidden spirits of Geodes, made of a budding Amethyst, this creature grow constantly amethyst shard, making it able to use the amethyst growing out of it like members.
 
@@ -28,9 +28,7 @@ _(in the future it will be able to craft Golams without budding amethyst, WIP!)_
 
 ### Cartographer Golam :
 
-*   The cartographer golam will be able to points to the direction of interests points on the maps given to him ! right click on it with a golam core to switch between POI.
-
-_(WIP !)_
+*   The cartographer golam can points to the direction of interests points on the maps given to him when right clicked with a Golam Core. If close enough the golam will stand at coordinates given on the map, revealing treasures!
 
 ### Deliverer Golam :
 
@@ -40,12 +38,11 @@ _(WIP !)_
 
 *   _A deliverer golam on it's way depositing stone_
 
-_(System is quite simple, it could be improved in the future for more possibilities of configurations)_
+
+### Guard Golam :
 
 *   The guard golam can defend others Golams against hostile mobs, including you ! take care of this robust variant who's 2 times more resistant than its friends ! they will naturally follow others non guards golams when there is no menace.
-
-_(In the future it will able to be assigned to others Golams, following and defending you( or maybe an area with an assigned block ? ))_
-
+*   It can be assignated to another golam to follow it. Right-click on the guard with a golam core then click a non-guard golam !
 
 Downloads : 
 ==========
