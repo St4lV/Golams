@@ -626,6 +626,14 @@ public class GolamEntity extends AbstractGolem implements InventoryCarrier, Neut
                     interfaceBE.removeAssignedGolam(this.getUUID());
                 }
         }
+        if (getTypeVariant()!=GolamProfessions.GUARD){
+            List<GolamEntity> guards = this.level().getEntitiesOfClass(GolamEntity.class, this.getBoundingBox().inflate(50),
+                    entity -> entity.getTypeVariant() == GolamProfessions.GUARD);
+
+            for (GolamEntity guard : guards) {
+                guard.removeAssignedGolam(this.getUUID());
+            }
+        }
     }
     private void dropAllItems() {
         if (this.level().isClientSide) return;

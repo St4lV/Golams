@@ -68,7 +68,7 @@ public class RestockSmoothBasaltGoal extends Goal {
     @Override
     public boolean canContinueToUse() {
         return targetAssignedBlock != null &&
-               blacksmith.distanceToSqr(Vec3.atCenterOf(targetAssignedBlock)) > 1.0;
+               blacksmith.distanceToSqr(Vec3.atCenterOf(targetAssignedBlock)) > 2.0;
     }
 
     @Override
