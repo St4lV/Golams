@@ -49,7 +49,9 @@ Downloads :
 
 * Github : https://github.com/St4lV/Golams/releases
 
-*  Curseforge : https://www.curseforge.com/minecraft/mc-mods/golams
+* Curseforge : https://www.curseforge.com/minecraft/mc-mods/golams
+
+* Modrinth : https://modrinth.com/mod/golams  
 
 Neoforge ressources : 
 ==========
