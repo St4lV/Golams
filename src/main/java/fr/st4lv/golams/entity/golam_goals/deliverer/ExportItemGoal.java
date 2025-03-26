@@ -121,8 +121,10 @@ public class ExportItemGoal extends Goal {
         Level level = chestEntity.getLevel();
         BlockState state = chestEntity.getBlockState();
 
-        if (state.getBlock() instanceof ChestBlock chestBlock)
+        if (state.getBlock() instanceof ChestBlock chestBlock) {
+            assert level != null;
             return ChestBlock.getContainer(chestBlock, state, level, chestEntity.getBlockPos(), true);
+        }
         return chestEntity;
     }
 

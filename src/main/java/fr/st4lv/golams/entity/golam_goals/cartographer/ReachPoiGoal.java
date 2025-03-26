@@ -1,13 +1,10 @@
 package fr.st4lv.golams.entity.golam_goals.cartographer;
 
-import fr.st4lv.golams.block.entity.GolamInterfaceBE;
 import fr.st4lv.golams.entity.custom.GolamEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.Vec3;
 
 public class ReachPoiGoal extends Goal {
@@ -57,8 +54,7 @@ public class ReachPoiGoal extends Goal {
     public BlockPos findAssignedItemGolamInterface(Item item) {
         for (GolamEntity.AssignedBlock ab : entity.getAssignedBlocks()) {
             if (ab.getItem() == item) {
-                BlockPos pos = ab.getBlockPos();
-                        return pos;
+                return ab.getBlockPos();
                     }
         }
         return null;

@@ -128,8 +128,8 @@ public class GolamInterface extends BaseEntityBlock implements EntityBlock{
 
 
     @Override
-    protected @NotNull ItemInteractionResult useItemOn(@NotNull ItemStack stack, @NotNull BlockState state, Level level, @NotNull BlockPos pos, Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hitResult) {
-        ItemStack itemstack = player.getItemInHand(hand);
+    protected @NotNull ItemInteractionResult useItemOn(@NotNull ItemStack stack, @NotNull BlockState state, Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hitResult) {
+        //ItemStack itemstack = player.getItemInHand(hand);
         if (level.getBlockEntity(pos) instanceof GolamInterfaceBE golamBE) {
 
             if (player.isShiftKeyDown()) {
