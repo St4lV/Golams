@@ -27,47 +27,81 @@ import java.util.Objects;
 public class GolamCore extends Item {
     private static GolamEntity selectedGolam = null;
     private boolean blockSelected = false;
+    private boolean guardGolamSelect = false;
+    private GolamEntity guard = null;
     public GolamCore(Properties properties) {
         super(properties);
     }
     @Override
     public @NotNull InteractionResult interactLivingEntity(@NotNull ItemStack stack, @NotNull Player player, @NotNull LivingEntity entity, @NotNull InteractionHand hand) {
+        if (player.level().isClientSide()) {
+            return InteractionResult.SUCCESS;
+        }
+
+        if (player.getCooldowns().isOnCooldown(this)) {
+            return InteractionResult.FAIL;
+        }
+
         if (entity instanceof GolamEntity golam) {
             selectedGolam = golam;
             if (player.isShiftKeyDown()){
-                blockSelected=false;
-                golam.resetAssignedBlock();
+                switch (golam.getTypeVariant()) {
+                    case CARTOGRAPHER:
+                        player.getCooldowns().addCooldown(this, 5);
+                        return InteractionResult.SUCCESS;
+                    case GUARD:
+                        guardGolamSelect = false;
+                        selectedGolam.resetAssignedGolams();
+                        break;
+                    default:
+                        blockSelected = false;
+                        golam.resetAssignedBlock();
+                        break;
+                }
                 player.displayClientMessage(Component.translatable("interaction.golams.golam_core_assign_clear"), true);
             } else {
-                switch (golam.getTypeVariant()) {
-                    case UNASSIGNED:
-                        player.displayClientMessage(Component.translatable("interaction.golams.golam_core_unassigned_needs_job"), true);
-                        return InteractionResult.SUCCESS;
-                    case CARTOGRAPHER:
-                        if (golam.getItemBySlot(EquipmentSlot.OFFHAND).getItem() == Items.FILLED_MAP){
-                            String poi = golam.getMapPOI();
-                            if (poi!=null) {
-                                player.displayClientMessage(Component.translatable("interaction.golams.golam_core_cartographer_valid_poi",poi), true);
+                if (guardGolamSelect && selectedGolam.getTypeVariant() != GolamProfessions.GUARD) {
+                    guard.addAssignedGolams(selectedGolam.getUUID());
+                    guardGolamSelect = false;
+                    player.displayClientMessage(Component.translatable("interaction.golams.golam_core_guard_golams_assign_step_2", Component.translatable("entity.golams.golam")), true);
+                    selectedGolam.updateGoals();
+                    player.getCooldowns().addCooldown(this, 5);
+                    return InteractionResult.SUCCESS;
+                } else {
+                    switch (golam.getTypeVariant()) {
+                        case UNASSIGNED:
+                            player.displayClientMessage(Component.translatable("interaction.golams.golam_core_unassigned_needs_job"), true);
+                            player.getCooldowns().addCooldown(this, 5);
+                            return InteractionResult.SUCCESS;
+                        case CARTOGRAPHER:
+                            if (golam.getItemBySlot(EquipmentSlot.OFFHAND).getItem() == Items.FILLED_MAP) {
+                                String poi = golam.getMapPOI();
+                                if (poi != null) {
+                                    player.displayClientMessage(Component.translatable("interaction.golams.golam_core_cartographer_valid_poi", poi), true);
+                                } else {
+                                    player.displayClientMessage(Component.translatable("interaction.golams.golam_core_cartographer_no_poi"), true);
+                                }
                             } else {
-                                player.displayClientMessage(Component.translatable("interaction.golams.golam_core_cartographer_no_poi"), true);
+                                player.displayClientMessage(Component.translatable("interaction.golams.golam_core_cartographer_no_filled_map", Component.translatable("item.minecraft.filled_map")), true);
+                                break;
                             }
-                        } else {
-                            player.displayClientMessage(Component.translatable("interaction.golams.golam_core_cartographer_no_filled_map",Component.translatable("item.minecraft.filled_map")),true);
                             break;
-                        }
-                        break;
-                    case GUARD:
-                        return InteractionResult.SUCCESS;
-                    default:
-                        player.displayClientMessage(Component.translatable("interaction.golams.golam_core_assign_step_1",Component.translatable("block.golams.golam_interface")), true);
-                        blockSelected=true;
-                        break;
+                        case GUARD:
+                            guard = selectedGolam;
+                            guardGolamSelect = true;
+                            player.displayClientMessage(Component.translatable("interaction.golams.golam_core_guard_golams_assign_step_1", Component.translatable("entity.golams.golam")), true);
+                            break;
+                        default:
+                            player.displayClientMessage(Component.translatable("interaction.golams.golam_core_assign_step_1", Component.translatable("block.golams.golam_interface")), true);
+                            blockSelected = true;
+                            break;
+                    }
                 }
             }
             selectedGolam.updateGoals();
+            player.getCooldowns().addCooldown(this, 5);
             return InteractionResult.SUCCESS;
-        }
-        return super.interactLivingEntity(stack, player, entity, hand);
+        } else return InteractionResult.PASS;
     }
 
     @Override

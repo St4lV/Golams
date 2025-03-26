@@ -12,11 +12,13 @@
 
   "entity.golams.golam": "Golam",
   "interaction.golams.golam_core_unassigned_needs_job": "This Golam needs to have a job to be configured",
-  "interaction.golams.golam_core_assign_clear":"Block assignations cleared.",
+  "interaction.golams.golam_core_assign_clear":"Assignations cleared.",
   "interaction.golams.golam_core_assign_step_1":"Golam selected ! Click on a %s to assign.",
   "interaction.golams.golam_core_assign_step_2":"%s at (%s,%s,%s) with item %s.",
   "interaction.golams.golam_core_cartographer_valid_poi": "Found point of interest %s on held map",
   "interaction.golams.golam_core_cartographer_no_poi": "This map has no points of interest",
-  "interaction.golams.golam_core_cartographer_no_filled_map": "This Golam needs to have a %s to be configured"
+  "interaction.golams.golam_core_cartographer_no_filled_map": "This Golam needs to have a %s to be configured",
+  "interaction.golams.golam_core_guard_golams_assign_step_1": "Golam selected ! Click on a %s to assign.",
+  "interaction.golams.golam_core_guard_golams_assign_step_2": "Assigned to %s successfully"
 
 }

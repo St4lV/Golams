@@ -9,6 +9,7 @@ import fr.st4lv.golams.entity.golam_goals.blacksmith.RestockSmoothBasaltGoal;
 import fr.st4lv.golams.entity.golam_goals.cartographer.ReachPoiGoal;
 import fr.st4lv.golams.entity.golam_goals.deliverer.ExportItemGoal;
 import fr.st4lv.golams.entity.golam_goals.deliverer.InsertItemGoal;
+import fr.st4lv.golams.entity.golam_goals.guard.FollowAssignedGolamGoal;
 import fr.st4lv.golams.item.ModItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
@@ -88,7 +89,7 @@ public class GolamEntity extends AbstractGolem implements InventoryCarrier, Neut
         this.goalSelector.addGoal(5, new FollowOtherGolamsGoal(this, 0.8, 32.0F));
         this.goalSelector.addGoal(8, new RandomLookAroundGoal(this));
         this.goalSelector.addGoal(20, new WaterAvoidingRandomStrollGoal(this, 0.5));
-        this.goalSelector.addGoal(3, new MoveTowardsTargetGoal(this, 0.9, 32.0F));
+        this.goalSelector.addGoal(10, new MoveTowardsTargetGoal(this, 0.9, 32.0F));
         this.goalSelector.addGoal(7, new LookAtPlayerGoal(this, Player.class, 6.0F));
 
         //BY PROFESSION
@@ -106,8 +107,9 @@ public class GolamEntity extends AbstractGolem implements InventoryCarrier, Neut
                 break;
             case GUARD:
                 this.goalSelector.addGoal(1, new MeleeAttackGoal(this, 0.9, true));
-                this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Player.class, 10, true, false, this::isAngryAt));
-                this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Mob.class, 5, false, false, (p_28879_) -> p_28879_ instanceof Enemy && !(p_28879_ instanceof Creeper)));
+                this.goalSelector.addGoal(2, new FollowAssignedGolamGoal(this,0.9));
+                this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, Player.class, 10, true, false, this::isAngryAt));
+                this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, Mob.class, 5, false, false, (p_28879_) -> p_28879_ instanceof Enemy && !(p_28879_ instanceof Creeper)));
                 break;
             default:
                 break;
@@ -162,6 +164,36 @@ public class GolamEntity extends AbstractGolem implements InventoryCarrier, Neut
 
     public void resetReachPoi() {
         this.shouldReachPoi = false;
+    }
+
+    private final List<AssignedGolams> assignedGolams = new ArrayList<>();
+
+    public List<AssignedGolams> getAssignedGolams() {
+        return this.assignedGolams;
+    }
+    public void addAssignedGolams(UUID uuid) {
+        resetAssignedGolams();
+        assignedGolams.add(new AssignedGolams(uuid));
+    }
+
+    public static class AssignedGolams {
+        private final UUID uuid;
+
+        public AssignedGolams(UUID uuid) {
+            this.uuid = uuid;
+        }
+
+        public UUID getGolamUuid() {
+            return uuid;
+        }
+    }
+
+    public void removeAssignedGolam(UUID uuid) {
+        assignedGolams.removeIf(ag -> ag.getGolamUuid().equals(uuid));
+    }
+
+    public void resetAssignedGolams(){
+        assignedGolams.clear();
     }
 
     public BlockPos findAssignedItemGolamInterface(Item item) {
@@ -286,7 +318,15 @@ public class GolamEntity extends AbstractGolem implements InventoryCarrier, Neut
             assignedBlocksTag.add(blockTag);
         }
         compound.put("assigned_blocks", assignedBlocksTag);
+        ListTag assignedGolamsTag = new ListTag();
+        for (AssignedGolams ag : assignedGolams) {
+            CompoundTag blockTag = new CompoundTag();
 
+            UUID uuid = ag.getGolamUuid();
+            blockTag.putUUID("uuid", uuid);
+            assignedGolamsTag.add(blockTag);
+        }
+        compound.put("assigned_golams", assignedGolamsTag);
         this.writeInventoryToTag(compound, this.registryAccess());
     }
 
@@ -308,6 +348,14 @@ public class GolamEntity extends AbstractGolem implements InventoryCarrier, Neut
                 BlockPos pos = new BlockPos(x, y, z);
                 Item item = BuiltInRegistries.ITEM.get(ResourceLocation.parse(blockTag.getString("item")));
                 assignedBlocks.add(new AssignedBlock(pos, item));
+            }
+        }
+        assignedGolams.clear();
+        ListTag assignedGolamsTag = compound.getList("assigned_golams", Tag.TAG_COMPOUND);
+        for (Tag tag_ : assignedGolamsTag) {
+            if (tag_ instanceof CompoundTag blockTag) {
+                UUID uuid = blockTag.getUUID("uuid");
+                assignedGolams.add(new AssignedGolams(uuid));
             }
         }
         this.updateGoals();
@@ -485,7 +533,7 @@ public class GolamEntity extends AbstractGolem implements InventoryCarrier, Neut
     }
 
     protected void playStepSound(BlockPos pos, BlockState block) {
-            this.playSound(SoundEvents.AMETHYST_BLOCK_STEP, 1.0F, 1.0F);
+            this.playSound(SoundEvents.AMETHYST_BLOCK_STEP, 0.2F, 1.0F);
     }
 
     public Vec3 getLeashOffset() {
@@ -599,5 +647,4 @@ public class GolamEntity extends AbstractGolem implements InventoryCarrier, Neut
             }
         }
     }
-
 }
