@@ -6,6 +6,7 @@ import fr.st4lv.golams.entity.ModEntities;
 import fr.st4lv.golams.entity.custom.GolamEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EquipmentSlot;

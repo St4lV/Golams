@@ -60,7 +60,7 @@ public class GolamEntity extends AbstractGolem implements InventoryCarrier, Neut
 
     public static final AnimationState idleAnimationState = new AnimationState();
     private int idleAnimationTimeout = 2;
-    //private static final int ALERT_RANGE_Y = 10;
+    private static final int ALERT_RANGE_Y = 10;
     public static float repair_value_by_smooth_basalt = 2;
     private final SimpleContainer inventory = new SimpleContainer(9);
     private boolean persistenceRequired;
@@ -69,7 +69,7 @@ public class GolamEntity extends AbstractGolem implements InventoryCarrier, Neut
     private static final EntityDataAccessor<String> GOLAM_PROFESSION =
             SynchedEntityData.defineId(GolamEntity.class, EntityDataSerializers.STRING);
 
-    //private int remainingPersistentAngerTime;
+    private int remainingPersistentAngerTime;
 
     public GolamEntity(EntityType<? extends AbstractGolem> entityType, Level level) {
         super(entityType, level);
@@ -145,7 +145,7 @@ public class GolamEntity extends AbstractGolem implements InventoryCarrier, Neut
     }
 
     public boolean shouldExport() {
-        return !shouldExport;
+        return shouldExport;
     }
 
     public void resetExportFlag() {
@@ -367,13 +367,13 @@ public class GolamEntity extends AbstractGolem implements InventoryCarrier, Neut
     private void setupAnimationStates() {
         if(this.idleAnimationTimeout <= 0) {
             this.idleAnimationTimeout = 80;
-            idleAnimationState.start(this.tickCount);
+            this.idleAnimationState.start(this.tickCount);
         } else {
             --this.idleAnimationTimeout;
         }
     }
 
-    protected SoundEvent getHurtSound(@NotNull DamageSource damageSource) {
+    protected SoundEvent getHurtSound(DamageSource damageSource) {
         return SoundEvents.AMETHYST_BLOCK_HIT;
     }
 
@@ -381,7 +381,7 @@ public class GolamEntity extends AbstractGolem implements InventoryCarrier, Neut
         return SoundEvents.AMETHYST_BLOCK_BREAK;
     }
 
-    protected @NotNull InteractionResult mobInteract(Player player, @NotNull InteractionHand hand) {
+    protected InteractionResult mobInteract(Player player, InteractionHand hand) {
         ItemStack itemstack = player.getItemBySlot(EquipmentSlot.MAINHAND);
 
         if (itemstack.is(Items.REDSTONE) && player.isCreative()) {
@@ -446,7 +446,7 @@ public class GolamEntity extends AbstractGolem implements InventoryCarrier, Neut
         }
     }
 
-    public static class AssignedBlock {
+    public class AssignedBlock {
         private final BlockPos blockPos;
         private final Item item;
 
@@ -532,19 +532,19 @@ public class GolamEntity extends AbstractGolem implements InventoryCarrier, Neut
         this.updateGoals();
     }
 
-    protected void playStepSound(@NotNull BlockPos pos, @NotNull BlockState block) {
+    protected void playStepSound(BlockPos pos, BlockState block) {
             this.playSound(SoundEvents.AMETHYST_BLOCK_STEP, 0.2F, 1.0F);
     }
 
-    public @NotNull Vec3 getLeashOffset() {
-        return new Vec3(0.0, 0.1F * this.getEyeHeight(), this.getBbWidth() * 0.4F);
+    public Vec3 getLeashOffset() {
+        return new Vec3(0.0, (double)(0.1F * this.getEyeHeight()), (double)(this.getBbWidth() * 0.4F));
     }
     private float getAttackDamage() {
         return (float)this.getAttributeValue(Attributes.ATTACK_DAMAGE);
     }
 
     public boolean doHurtTarget(Entity entity) {
-        //int attackAnimationTick = 10;
+        int attackAnimationTick = 10;
         this.level().broadcastEntityEvent(this, (byte)4);
         float f = this.getAttackDamage();
         float f1 = (int)f > 0 ? f / 2.0F + (float)this.random.nextInt((int)f) : f;
@@ -552,7 +552,8 @@ public class GolamEntity extends AbstractGolem implements InventoryCarrier, Neut
         boolean flag = entity.hurt(damagesource, f1);
         if (flag) {
             double var10000;
-            if (entity instanceof LivingEntity livingentity) {
+            if (entity instanceof LivingEntity) {
+                LivingEntity livingentity = (LivingEntity)entity;
                 var10000 = livingentity.getAttributeValue(Attributes.KNOCKBACK_RESISTANCE);
             } else {
                 var10000 = 0.0;
@@ -562,7 +563,8 @@ public class GolamEntity extends AbstractGolem implements InventoryCarrier, Neut
             double d1 = Math.max(0.0, 1.0 - d0);
             entity.setDeltaMovement(entity.getDeltaMovement().add(0.0, 0.4000000059604645 * d1, 0.0));
             Level var11 = this.level();
-            if (var11 instanceof ServerLevel serverlevel) {
+            if (var11 instanceof ServerLevel) {
+                ServerLevel serverlevel = (ServerLevel)var11;
                 EnchantmentHelper.doPostAttackEffects(serverlevel, entity, damagesource);
             }
         }
@@ -592,23 +594,23 @@ public class GolamEntity extends AbstractGolem implements InventoryCarrier, Neut
     }
 
     @Override
-    public void setItemSlotAndDropWhenKilled(@NotNull EquipmentSlot slot, @NotNull ItemStack stack) {
+    public void setItemSlotAndDropWhenKilled(EquipmentSlot slot, ItemStack stack) {
         this.setItemSlot(slot, stack);
         this.setGuaranteedDrop(slot);
         this.persistenceRequired = true;
     }
 
     @Override
-    public @NotNull SimpleContainer getInventory() {
+    public SimpleContainer getInventory() {
         return inventory;
     }
-    public @NotNull SlotAccess getSlot(int slot) {
+    public SlotAccess getSlot(int slot) {
         int i = slot - 300;
         return i >= 0 && i < this.inventory.getContainerSize() ? SlotAccess.forContainer(this.inventory, i) : super.getSlot(slot);
     }
 
     @Override
-    public void die(@NotNull DamageSource damageSource) {
+    public void die(DamageSource damageSource) {
         beforeDespawn();
         super.die(damageSource);
     }
@@ -636,7 +638,7 @@ public class GolamEntity extends AbstractGolem implements InventoryCarrier, Neut
     private void dropAllItems() {
         if (this.level().isClientSide) return;
         SimpleContainer inventory = getInventory();
-        if (!inventory.isEmpty()) {
+        if (inventory != null) {
             for (int i = 0; i < inventory.getContainerSize(); i++) {
                 ItemStack stack = inventory.getItem(i);
                 if (!stack.isEmpty()) {

@@ -36,7 +36,7 @@ import net.neoforged.neoforge.event.server.ServerStartingEvent;
 public class Golams {
 
     /**
-     *  Big thanks to @ModdingByKaupenjoe on YouTube for the tutorials, qnd to other peoples of Internet for the codes parts/hints/tips on posts
+     *  Big thanks to @ModdingByKaupenjoe on Youtube for the tutorials, qnd to other peoples of Internet for the codes parts/hints/tips on posts
      *
      *
     **/

@@ -25,7 +25,7 @@ public class GolamInterfaceBERenderer implements BlockEntityRenderer<GolamInterf
 
     }
     @Override
-    public void render(GolamInterfaceBE blockEntity, float partialTick, @NotNull PoseStack poseStack, @NotNull MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
+    public void render(GolamInterfaceBE blockEntity, float partialTick, @NotNull PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
         ItemStack stack =  blockEntity.inventory.getStackInSlot(0);
 
         if (!stack.isEmpty()) {
@@ -49,8 +49,12 @@ public class GolamInterfaceBERenderer implements BlockEntityRenderer<GolamInterf
                 case NORTH -> {
                     poseStack.translate(0.5, 0.5, 0.15);
                     poseStack.mulPose(Axis.YP.rotationDegrees(180));
+;
                 }
-                case SOUTH -> poseStack.translate(0.5, 0.5, 0.85);
+                case SOUTH -> {
+                    poseStack.translate(0.5, 0.5, 0.85);
+
+                }
                 case WEST -> {
                     poseStack.translate(0.15, 0.5, 0.5);
                     poseStack.mulPose(Axis.YP.rotationDegrees(-90));

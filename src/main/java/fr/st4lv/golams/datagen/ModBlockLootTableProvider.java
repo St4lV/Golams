@@ -1,6 +1,7 @@
 package fr.st4lv.golams.datagen;
 
 import fr.st4lv.golams.block.ModBlocks;
+import net.minecraft.advancements.critereon.StatePropertiesPredicate;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
@@ -15,7 +16,6 @@ import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.functions.ApplyBonusCount;
 import net.minecraft.world.level.storage.loot.functions.SetItemCountFunction;
 import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 
@@ -37,7 +37,7 @@ public class ModBlockLootTableProvider extends BlockLootSubProvider {
     }
 
     @Override
-    protected @NotNull Iterable<Block> getKnownBlocks() {
+    protected Iterable<Block> getKnownBlocks() {
         return ModBlocks.BLOCKS.getEntries().stream().map(Holder::value)::iterator;
 }
     }

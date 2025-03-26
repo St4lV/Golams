@@ -24,8 +24,7 @@ public enum GolamProfessions {
     }
     public static int getIndex(String professionName){
         return byName(professionName).getId();
-    }
-
+    };
     public int getId() {
         return id;
     }

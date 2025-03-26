@@ -15,7 +15,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.List;
@@ -37,7 +36,7 @@ public class GolamItem extends Item {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, @NotNull TooltipContext context, @NotNull List<Component> tooltipComponents, @NotNull TooltipFlag tooltipFlag) {
+    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
 
         if (stack.has(ModDataComponents.GOLAM_PROFESSION.get())) {
             String golamProfession = stack.get(ModDataComponents.GOLAM_PROFESSION.get());
@@ -48,7 +47,7 @@ public class GolamItem extends Item {
     }
 
     @Override
-    public @NotNull InteractionResult useOn(UseOnContext context) {
+    public InteractionResult useOn(UseOnContext context) {
         Level level = context.getLevel();
         if (!level.isClientSide) {
             ItemStack stack = context.getItemInHand();
@@ -69,7 +68,6 @@ public class GolamItem extends Item {
             }
             golam.setHealth((int) actH);
             level.addFreshEntity(golam);
-            assert player != null;
             player.getInventory().removeItem(stack);
 
 

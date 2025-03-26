@@ -24,7 +24,7 @@ public class FollowOtherGolamsGoal extends Goal {
                 e -> e.getTypeVariant() != GolamProfessions.GUARD && entity.distanceTo(e) > 10.0);
 
         if (!golams.isEmpty()) {
-            targetGolam = golams.getFirst();
+            targetGolam = golams.get(0);
             return true;
         }
         return false;
