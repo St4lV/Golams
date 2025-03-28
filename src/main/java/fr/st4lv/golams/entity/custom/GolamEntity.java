@@ -10,6 +10,7 @@ import fr.st4lv.golams.entity.golam_goals.cartographer.ReachPoiGoal;
 import fr.st4lv.golams.entity.golam_goals.deliverer.ExportItemGoal;
 import fr.st4lv.golams.entity.golam_goals.deliverer.InsertItemGoal;
 import fr.st4lv.golams.entity.golam_goals.guard.FollowAssignedGolamGoal;
+import fr.st4lv.golams.entity.golam_goals.harvester.HarvestAssignedRessourcesGoal;
 import fr.st4lv.golams.item.ModItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
@@ -111,6 +112,8 @@ public class GolamEntity extends AbstractGolem implements InventoryCarrier, Neut
                 this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, Player.class, 10, true, false, this::isAngryAt));
                 this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, Mob.class, 5, false, false, (p_28879_) -> p_28879_ instanceof Enemy && !(p_28879_ instanceof Creeper)));
                 break;
+            case HARVESTER:
+                this.goalSelector.addGoal(1, new HarvestAssignedRessourcesGoal(this,1.0));
             default:
                 break;
         }
@@ -367,13 +370,13 @@ public class GolamEntity extends AbstractGolem implements InventoryCarrier, Neut
     private void setupAnimationStates() {
         if(this.idleAnimationTimeout <= 0) {
             this.idleAnimationTimeout = 80;
-            this.idleAnimationState.start(this.tickCount);
+            idleAnimationState.start(this.tickCount);
         } else {
             --this.idleAnimationTimeout;
         }
     }
 
-    protected SoundEvent getHurtSound(DamageSource damageSource) {
+    protected SoundEvent getHurtSound(@NotNull DamageSource damageSource) {
         return SoundEvents.AMETHYST_BLOCK_HIT;
     }
 
@@ -381,7 +384,7 @@ public class GolamEntity extends AbstractGolem implements InventoryCarrier, Neut
         return SoundEvents.AMETHYST_BLOCK_BREAK;
     }
 
-    protected InteractionResult mobInteract(Player player, InteractionHand hand) {
+    protected @NotNull InteractionResult mobInteract(Player player, @NotNull InteractionHand hand) {
         ItemStack itemstack = player.getItemBySlot(EquipmentSlot.MAINHAND);
         if (player.getCooldowns().isOnCooldown(itemstack.getItem())) {
             return InteractionResult.FAIL;
@@ -433,20 +436,19 @@ public class GolamEntity extends AbstractGolem implements InventoryCarrier, Neut
             }
             return InteractionResult.PASS;
         }else if (itemstack.is(Items.AMETHYST_BLOCK)) {
-            switch (getTypeVariant()) {
-                case BLACKSMITH :
-                    ItemStack stack = new ItemStack(Items.AMETHYST_SHARD);
-                    stack.setCount(2);
-                    itemstack.consume(1, player);
-                    this.playSound(SoundEvents.SMITHING_TABLE_USE, 0.2F, 1.0F);
-                    if (!player.getInventory().add(stack)) {
-                        player.drop(stack, false);
-                    }
-                    player.getCooldowns().addCooldown(itemstack.getItem(), 5);
-                    return InteractionResult.SUCCESS;
-                default:
-                    return InteractionResult.PASS;
+            if (Objects.requireNonNull(getTypeVariant()) == GolamProfessions.BLACKSMITH) {
+                ItemStack stack = new ItemStack(Items.AMETHYST_SHARD);
+                stack.setCount(2);
+                itemstack.consume(1, player);
+                this.playSound(SoundEvents.UI_STONECUTTER_TAKE_RESULT, 0.5F, 1.0F);
+                this.playSound(SoundEvents.AMETHYST_BLOCK_PLACE, 1.0F, 1.0F);
+                if (!player.getInventory().add(stack)) {
+                    player.drop(stack, false);
+                }
+                player.getCooldowns().addCooldown(itemstack.getItem(), 5);
+                return InteractionResult.SUCCESS;
             }
+            return InteractionResult.PASS;
         }/* else if (itemstack.is(Items.AMETHYST_SHARD)) {
             switch (getTypeVariant()) {
                 case BLACKSMITH :
@@ -552,12 +554,12 @@ public class GolamEntity extends AbstractGolem implements InventoryCarrier, Neut
         this.updateGoals();
     }
 
-    protected void playStepSound(BlockPos pos, BlockState block) {
+    protected void playStepSound(@NotNull BlockPos pos, @NotNull BlockState block) {
             this.playSound(SoundEvents.AMETHYST_BLOCK_STEP, 0.2F, 1.0F);
     }
 
-    public Vec3 getLeashOffset() {
-        return new Vec3(0.0, (double)(0.1F * this.getEyeHeight()), (double)(this.getBbWidth() * 0.4F));
+    public @NotNull Vec3 getLeashOffset() {
+        return new Vec3(0.0, 0.1F * this.getEyeHeight(), this.getBbWidth() * 0.4F);
     }
     private float getAttackDamage() {
         return (float)this.getAttributeValue(Attributes.ATTACK_DAMAGE);
@@ -572,8 +574,7 @@ public class GolamEntity extends AbstractGolem implements InventoryCarrier, Neut
         boolean flag = entity.hurt(damagesource, f1);
         if (flag) {
             double var10000;
-            if (entity instanceof LivingEntity) {
-                LivingEntity livingentity = (LivingEntity)entity;
+            if (entity instanceof LivingEntity livingentity) {
                 var10000 = livingentity.getAttributeValue(Attributes.KNOCKBACK_RESISTANCE);
             } else {
                 var10000 = 0.0;
@@ -583,8 +584,7 @@ public class GolamEntity extends AbstractGolem implements InventoryCarrier, Neut
             double d1 = Math.max(0.0, 1.0 - d0);
             entity.setDeltaMovement(entity.getDeltaMovement().add(0.0, 0.4000000059604645 * d1, 0.0));
             Level var11 = this.level();
-            if (var11 instanceof ServerLevel) {
-                ServerLevel serverlevel = (ServerLevel)var11;
+            if (var11 instanceof ServerLevel serverlevel) {
                 EnchantmentHelper.doPostAttackEffects(serverlevel, entity, damagesource);
             }
         }
@@ -614,23 +614,23 @@ public class GolamEntity extends AbstractGolem implements InventoryCarrier, Neut
     }
 
     @Override
-    public void setItemSlotAndDropWhenKilled(EquipmentSlot slot, ItemStack stack) {
+    public void setItemSlotAndDropWhenKilled(@NotNull EquipmentSlot slot, @NotNull ItemStack stack) {
         this.setItemSlot(slot, stack);
         this.setGuaranteedDrop(slot);
         this.persistenceRequired = true;
     }
 
     @Override
-    public SimpleContainer getInventory() {
+    public @NotNull SimpleContainer getInventory() {
         return inventory;
     }
-    public SlotAccess getSlot(int slot) {
+    public @NotNull SlotAccess getSlot(int slot) {
         int i = slot - 300;
         return i >= 0 && i < this.inventory.getContainerSize() ? SlotAccess.forContainer(this.inventory, i) : super.getSlot(slot);
     }
 
     @Override
-    public void die(DamageSource damageSource) {
+    public void die(@NotNull DamageSource damageSource) {
         beforeDespawn();
         super.die(damageSource);
     }
@@ -658,13 +658,11 @@ public class GolamEntity extends AbstractGolem implements InventoryCarrier, Neut
     private void dropAllItems() {
         if (this.level().isClientSide) return;
         SimpleContainer inventory = getInventory();
-        if (inventory != null) {
-            for (int i = 0; i < inventory.getContainerSize(); i++) {
-                ItemStack stack = inventory.getItem(i);
-                if (!stack.isEmpty()) {
-                    spawnAtLocation(stack);
-                    inventory.setItem(i, ItemStack.EMPTY);
-                }
+        for (int i = 0; i < inventory.getContainerSize(); i++) {
+            ItemStack stack = inventory.getItem(i);
+            if (!stack.isEmpty()) {
+                spawnAtLocation(stack);
+                inventory.setItem(i, ItemStack.EMPTY);
             }
         }
         for (EquipmentSlot slot : EquipmentSlot.values()) {

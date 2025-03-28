@@ -6,7 +6,7 @@ import fr.st4lv.golams.entity.ModEntities;
 import fr.st4lv.golams.entity.custom.GolamEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -46,9 +46,9 @@ public class GolamCore extends Item {
             selectedGolam = golam;
             if (player.isShiftKeyDown()){
                 switch (golam.getTypeVariant()) {
-                    case BLACKSMITH,DELIVERER:
+                    case BLACKSMITH,DELIVERER,HARVESTER:
                         blockSelected = false;
-                        selectedGolam.resetAssignedGolams();
+                        selectedGolam.resetAssignedBlock();
                         break;
                     case CARTOGRAPHER:
                         player.getCooldowns().addCooldown(this, 5);
@@ -79,13 +79,15 @@ public class GolamCore extends Item {
                             if (golam.getItemBySlot(EquipmentSlot.OFFHAND).getItem() == Items.FILLED_MAP) {
                                 String poi = golam.getMapPOI();
                                 if (poi != null) {
-                                    player.displayClientMessage(Component.translatable("interaction.golams.golam_core_cartographer_valid_poi", poi), true);
+                                    player.displayClientMessage(
+                                            Component.translatable("interaction.golams.golam_core_cartographer_valid_poi",
+                                            Component.translatable(poi)),
+                                            true);
                                 } else {
                                     player.displayClientMessage(Component.translatable("interaction.golams.golam_core_cartographer_no_poi"), true);
                                 }
                             } else {
                                 player.displayClientMessage(Component.translatable("interaction.golams.golam_core_cartographer_no_filled_map", Component.translatable("item.minecraft.filled_map")), true);
-                                break;
                             }
                             break;
                         case GUARD:
@@ -93,7 +95,7 @@ public class GolamCore extends Item {
                             guardGolamSelect = true;
                             player.displayClientMessage(Component.translatable("interaction.golams.golam_core_guard_golams_assign_step_1", Component.translatable("entity.golams.golam")), true);
                             break;
-                        case BLACKSMITH,DELIVERER:
+                        case BLACKSMITH,DELIVERER,HARVESTER:
                             player.displayClientMessage(Component.translatable("interaction.golams.golam_core_assign_step_1", Component.translatable("block.golams.golam_interface")), true);
                             blockSelected = true;
                             break;
@@ -113,38 +115,92 @@ public class GolamCore extends Item {
         Level level = context.getLevel();
 
         if (!level.isClientSide) {
-            Player player = context.getPlayer();
+            Player player = Objects.requireNonNull(context.getPlayer());
+            if (player.getCooldowns().isOnCooldown(this)) {
+                return InteractionResult.FAIL;
+            }
             ItemStack stack = context.getItemInHand();
             BlockPos pos = context.getClickedPos();
             BlockState state = level.getBlockState(pos);
             BlockEntity be = level.getBlockEntity(pos);
-            if (selectedGolam != null && player!=null ) {
+            BlockState block = level.getBlockState(pos);
+
+            if (selectedGolam != null ) {
                 switch (selectedGolam.getTypeVariant()) {
                     case UNASSIGNED,CARTOGRAPHER, GUARD:
                         blockSelected=false;
                         return InteractionResult.PASS;
-                    default:
-                    if (!blockSelected) return InteractionResult.PASS;
-                    if (be instanceof GolamInterfaceBE golamInterface) {
-                        Item item = golamInterface.inventory.getStackInSlot(0).getItem();
-                        selectedGolam.addAssignedBlock(pos, item);
-                        golamInterface.addAssignedGolams(selectedGolam.getUUID());
-                        selectedGolam.updateGoals();
-                        selectedGolam = null;
+                    case BLACKSMITH,DELIVERER:
+                        if (!blockSelected) return InteractionResult.PASS;
+                        if (be instanceof GolamInterfaceBE golamInterface) {
+                            Item item = golamInterface.inventory.getStackInSlot(0).getItem();
+                            selectedGolam.addAssignedBlock(pos, item);
+                            golamInterface.addAssignedGolams(selectedGolam.getUUID());
+                            selectedGolam.updateGoals();
+                            selectedGolam = null;
+                            player.displayClientMessage(Component.translatable(
+                                    "interaction.golams.golam_core_assign_step_2",
+                                    Component.translatable("block.golams.golam_interface"),
+                                    String.valueOf(pos.getX()),
+                                    String.valueOf(pos.getY()),
+                                    String.valueOf(pos.getZ()),
+                                    Component.translatable(item.getDescriptionId())
+                            ), true);
 
-                        player.displayClientMessage(Component.translatable(
-                                "interaction.golams.golam_core_assign_step_2",
-                                Component.translatable("block.golams.golam_interface"),
-                                String.valueOf(pos.getX()),
-                                String.valueOf(pos.getY()),
-                                String.valueOf(pos.getZ()),
-                                ((GolamInterfaceBE) be).inventory.getStackInSlot(0).getItem().getDescription()
-                        ), true);
+                            player.getCooldowns().addCooldown(this, 5);
+                            return InteractionResult.SUCCESS;
+                        }
+                        break;
+                    case HARVESTER:
+                        if (!blockSelected) return InteractionResult.PASS;
+                        if (    //CROPS
+                                block.getBlock().defaultBlockState().is(BlockTags.CROPS)
+                                ||block.getBlock()==Blocks.SWEET_BERRY_BUSH
+                                ||block.getBlock()==Blocks.TORCHFLOWER
+                                ||block.getBlock()==Blocks.COCOA
+                                ||block.getBlock()==Blocks.NETHER_WART
+                                ||block.getBlock()==Blocks.ATTACHED_MELON_STEM
+                                ||block.getBlock()== Blocks.ATTACHED_PUMPKIN_STEM
 
 
-                        return InteractionResult.SUCCESS;
+                                //TREES
+                                /*||block.getBlock().defaultBlockState().is(BlockTags.SAPLINGS)
+                                ||block.getBlock()==Blocks.BROWN_MUSHROOM
+                                ||block.getBlock()==Blocks.RED_MUSHROOM
+                                ||block.getBlock()==Blocks.CRIMSON_FUNGUS
+                                ||block.getBlock()==Blocks.WARPED_FUNGUS*/
+
+                                //BEES
+                                /*||block.getBlock()==Blocks.BEE_NEST
+                                ||block.getBlock()==Blocks.BEEHIVE*/
+                        ){
+                            Item item;
+                            if (block.getBlock()== Blocks.ATTACHED_MELON_STEM){
+                                    item = Items.MELON_SEEDS;
+                            }
+                            else if (block.getBlock()== Blocks.ATTACHED_PUMPKIN_STEM){
+                                item = Items.PUMPKIN_SEEDS;
+                            } else {
+                                item = block.getBlock().asItem();
+                            }
+                            selectedGolam.addAssignedBlock(pos, item);
+                            selectedGolam.updateGoals();
+                            selectedGolam = null;
+
+                            player.displayClientMessage(Component.translatable(
+                                    "interaction.golams.golam_core_harvester_assign_step_2",
+                                    Component.translatable(item.getDescriptionId()),
+                                    String.valueOf(pos.getX()),
+                                    String.valueOf(pos.getY()),
+                                    String.valueOf(pos.getZ())
+                            ), true);
+
+                            player.getCooldowns().addCooldown(this, 5);
+                            return InteractionResult.SUCCESS;
+
+                        }
+                    default:return InteractionResult.PASS;
                     }
-                }
                 }
 
             if (state.is(Blocks.BUDDING_AMETHYST)) {
@@ -160,6 +216,7 @@ public class GolamCore extends Item {
                     //player.displayClientMessage(Component.translatable("!"), true);
                 }*/
                 Objects.requireNonNull(player).getInventory().removeItem(stack);
+                player.getCooldowns().addCooldown(this, 5);
                 return InteractionResult.CONSUME;
             }
         }
