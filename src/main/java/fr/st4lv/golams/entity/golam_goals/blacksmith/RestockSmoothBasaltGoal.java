@@ -8,7 +8,11 @@ import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.ChestBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.ChestBlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 
 public class RestockSmoothBasaltGoal extends Goal {
@@ -90,6 +94,11 @@ public class RestockSmoothBasaltGoal extends Goal {
         BlockEntity be = blacksmith.level().getBlockEntity(targetAssignedBlock);
         if (be instanceof GolamInterfaceBE interfaceBE) {
             Container chest = interfaceBE.getLinkedChest();
+            if (chest == null) return;
+
+            if (chest instanceof ChestBlockEntity chestEntity)
+                chest = getChestContainer(chestEntity);
+
             if (chest != null) {
                 int amountNeeded = 64 - blacksmith.getInventory().getItem(0).getCount();
                 for (int i = 0; i < chest.getContainerSize(); i++) {
@@ -107,7 +116,15 @@ public class RestockSmoothBasaltGoal extends Goal {
         cooldown = 200;
         targetAssignedBlock = null;
     }
+    public static Container getChestContainer(ChestBlockEntity chestEntity) {
+        Level level = chestEntity.getLevel();
+        BlockState state = chestEntity.getBlockState();
 
+        if (state.getBlock() instanceof ChestBlock chestBlock) {
+            return ChestBlock.getContainer(chestBlock, state, level, chestEntity.getBlockPos(), true);
+        }
+        return chestEntity;
+    }
 }
 
 
