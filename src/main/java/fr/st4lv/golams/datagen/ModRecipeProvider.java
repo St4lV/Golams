@@ -80,6 +80,15 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                 ).unlocks("has_golam_upgrade_template", has(ModItems.GOLAM_UPGRADE_TEMPLATE.get()))
                 .save(recipeOutput, ResourceLocation.fromNamespaceAndPath("golams", "golam_guard_template_upgrade_smithing"));
 
+        SmithingTransformRecipeBuilder.smithing(
+                        Ingredient.of(ModItems.GOLAM_UPGRADE_TEMPLATE.get()),
+                        Ingredient.of(Items.STONE_HOE),
+                        Ingredient.of(Items.AMETHYST_SHARD),
+                        RecipeCategory.TOOLS,
+                        ModItems.GOLAM_HARVESTER_UPGRADE_TEMPLATE.get()
+                ).unlocks("has_golam_upgrade_template", has(ModItems.GOLAM_UPGRADE_TEMPLATE.get()))
+                .save(recipeOutput, ResourceLocation.fromNamespaceAndPath("golams", "golam_harvester_template_upgrade_smithing"));
+
         // GOLAM INTERFACE
 
         SmithingTransformRecipeBuilder.smithing(

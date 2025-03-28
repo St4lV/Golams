@@ -8,8 +8,8 @@ public enum GolamProfessions {
     BLACKSMITH(1, "blacksmith"),
     CARTOGRAPHER(2, "cartographer"),
     DELIVERER(3, "deliverer"),
-    GUARD(4, "guard")/*,
-    GATHERER(4,"gatherer")*/
+    GUARD(4, "guard"),
+    HARVESTER(5,"harvester")
     ;
     private static final GolamProfessions[] BY_ID = Arrays.stream(values())
             .sorted(Comparator.comparingInt(GolamProfessions::getId))

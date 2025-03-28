@@ -23,13 +23,11 @@ public class ModCreativeModeTabs {
             () -> CreativeModeTab.builder().icon(() -> new ItemStack(ModItems.GOLAM_ITEM.get()))
                     .title(Component.translatable("creativetab.golams.creative_tab_items"))
                     .displayItems((itemDisplayParameters, output) -> {
-                        int index = 0;
                         for (GolamProfessions profession : GolamProfessions.values()) {
                             ItemStack stack = new ItemStack(ModItems.GOLAM_ITEM.get());
                             stack.set(ModDataComponents.GOLAM_PROFESSION.get(), profession.getProfessionName());
                             stack.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(profession.getId()));
                             output.accept(stack);
-                            index += 1;
                         }
                         output.accept(ModItems.GOLAM_CORE.get());
                         output.accept(ModItems.GOLAM_UPGRADE_TEMPLATE.get());
@@ -37,6 +35,7 @@ public class ModCreativeModeTabs {
                         output.accept(ModItems.GOLAM_CARTOGRAPHER_UPGRADE_TEMPLATE.get());
                         output.accept(ModItems.GOLAM_DELIVERER_UPGRADE_TEMPLATE.get());
                         output.accept(ModItems.GOLAM_GUARD_UPGRADE_TEMPLATE.get());
+                        output.accept(ModItems.GOLAM_HARVESTER_UPGRADE_TEMPLATE.get());
                         output.accept(ModBlocks.GOLAM_INTERFACE);
                     }).build());
 

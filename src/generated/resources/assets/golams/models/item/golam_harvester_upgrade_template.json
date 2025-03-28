@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "golams:item/golam_harvester_upgrade_template"
+  }
+}

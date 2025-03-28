@@ -33,6 +33,7 @@ public class ModItemModelProvider extends ItemModelProvider {
         basicItem(ModItems.GOLAM_CARTOGRAPHER_UPGRADE_TEMPLATE.get());
         basicItem(ModItems.GOLAM_DELIVERER_UPGRADE_TEMPLATE.get());
         basicItem(ModItems.GOLAM_GUARD_UPGRADE_TEMPLATE.get());
+        basicItem(ModItems.GOLAM_HARVESTER_UPGRADE_TEMPLATE.get());
 
         basicItem(ModItems.GOLAM_CORE.get());
 

@@ -34,6 +34,9 @@ public class ModItems {
             ModSmithingTemplatesItem::createGolamProfessionUpgradeTemplate);
     public static final DeferredItem<Item> GOLAM_GUARD_UPGRADE_TEMPLATE = ITEMS.register("golam_guard_upgrade_template",
             ModSmithingTemplatesItem::createGolamProfessionUpgradeTemplate);
+    public static final DeferredItem<Item> GOLAM_HARVESTER_UPGRADE_TEMPLATE = ITEMS.register("golam_harvester_upgrade_template",
+            ModSmithingTemplatesItem::createGolamProfessionUpgradeTemplate);
+
 
     //ITEMS
 

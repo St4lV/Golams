@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:smithing_transform",
+  "addition": {
+    "item": "minecraft:amethyst_shard"
+  },
+  "base": {
+    "item": "golams:golam"
+  },
+  "result": {
+    "count": 1,
+    "id": "golams:golam",
+    "components": {
+      "golams:golam_profession": "harvester",
+      "custom_model_data": 5
+    }
+  },
+  "template": {
+    "item": "golams:golam_harvester_upgrade_template"
+  }
+}

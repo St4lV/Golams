@@ -46,6 +46,10 @@ public class GolamCore extends Item {
             selectedGolam = golam;
             if (player.isShiftKeyDown()){
                 switch (golam.getTypeVariant()) {
+                    case BLACKSMITH,DELIVERER:
+                        blockSelected = false;
+                        selectedGolam.resetAssignedGolams();
+                        break;
                     case CARTOGRAPHER:
                         player.getCooldowns().addCooldown(this, 5);
                         return InteractionResult.SUCCESS;
@@ -54,9 +58,7 @@ public class GolamCore extends Item {
                         selectedGolam.resetAssignedGolams();
                         break;
                     default:
-                        blockSelected = false;
-                        golam.resetAssignedBlock();
-                        break;
+                        return InteractionResult.PASS;
                 }
                 player.displayClientMessage(Component.translatable("interaction.golams.golam_core_assign_clear"), true);
             } else {
@@ -91,10 +93,12 @@ public class GolamCore extends Item {
                             guardGolamSelect = true;
                             player.displayClientMessage(Component.translatable("interaction.golams.golam_core_guard_golams_assign_step_1", Component.translatable("entity.golams.golam")), true);
                             break;
-                        default:
+                        case BLACKSMITH,DELIVERER:
                             player.displayClientMessage(Component.translatable("interaction.golams.golam_core_assign_step_1", Component.translatable("block.golams.golam_interface")), true);
                             blockSelected = true;
                             break;
+                        default:
+                            return InteractionResult.PASS;
                     }
                 }
             }
@@ -116,7 +120,7 @@ public class GolamCore extends Item {
             BlockEntity be = level.getBlockEntity(pos);
             if (selectedGolam != null && player!=null ) {
                 switch (selectedGolam.getTypeVariant()) {
-                    case CARTOGRAPHER, GUARD:
+                    case UNASSIGNED,CARTOGRAPHER, GUARD:
                         blockSelected=false;
                         return InteractionResult.PASS;
                     default:

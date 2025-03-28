@@ -7,6 +7,7 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.ResourceLocation;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
@@ -28,14 +29,9 @@ public class GolamRenderer extends MobRenderer<GolamEntity, GolamModel<GolamEnti
     }
 
     @Override
-    public ResourceLocation getTextureLocation(GolamEntity entity) {
-        return switch (entity.getTypeVariant()) {
-            case BLACKSMITH -> ResourceLocation.fromNamespaceAndPath((Golams.MODID), "textures/entity/blacksmith_golam.png");
-            case CARTOGRAPHER -> ResourceLocation.fromNamespaceAndPath((Golams.MODID), "textures/entity/cartographer_golam.png");
-            case DELIVERER -> ResourceLocation.fromNamespaceAndPath((Golams.MODID), "textures/entity/deliverer_golam.png");
-            case GUARD -> ResourceLocation.fromNamespaceAndPath((Golams.MODID), "textures/entity/guard_golam.png");
-            default -> ResourceLocation.fromNamespaceAndPath((Golams.MODID), "textures/entity/unassigned_golam.png");
-        };
+    public @NotNull ResourceLocation getTextureLocation(GolamEntity entity) {
+        String golam_profession = entity.getTypeVariant().getProfessionName();
+        return  ResourceLocation.fromNamespaceAndPath((Golams.MODID), "textures/entity/"+golam_profession+"_golam.png");
     }
 
     @Override

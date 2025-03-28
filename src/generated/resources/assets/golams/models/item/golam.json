@@ -30,6 +30,12 @@
       "predicate": {
         "minecraft:custom_model_data": 4.0
       }
+    },
+    {
+      "model": "golams:item/harvester_golam",
+      "predicate": {
+        "minecraft:custom_model_data": 5.0
+      }
     }
   ],
   "textures": {
