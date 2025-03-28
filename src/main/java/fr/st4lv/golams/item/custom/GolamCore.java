@@ -114,28 +114,33 @@ public class GolamCore extends Item {
             BlockPos pos = context.getClickedPos();
             BlockState state = level.getBlockState(pos);
             BlockEntity be = level.getBlockEntity(pos);
-
             if (selectedGolam != null && player!=null ) {
-                if (!blockSelected) return InteractionResult.PASS;
-                if (be instanceof GolamInterfaceBE golamInterface) {
-                    Item item = golamInterface.inventory.getStackInSlot(0).getItem();
-                    selectedGolam.addAssignedBlock(pos, item);
-                    golamInterface.addAssignedGolams(selectedGolam.getUUID());
-                    selectedGolam.updateGoals();
-                    selectedGolam = null;
+                switch (selectedGolam.getTypeVariant()) {
+                    case CARTOGRAPHER, GUARD:
+                        blockSelected=false;
+                        return InteractionResult.PASS;
+                    default:
+                    if (!blockSelected) return InteractionResult.PASS;
+                    if (be instanceof GolamInterfaceBE golamInterface) {
+                        Item item = golamInterface.inventory.getStackInSlot(0).getItem();
+                        selectedGolam.addAssignedBlock(pos, item);
+                        golamInterface.addAssignedGolams(selectedGolam.getUUID());
+                        selectedGolam.updateGoals();
+                        selectedGolam = null;
 
-                    player.displayClientMessage(Component.translatable(
-                            "interaction.golams.golam_core_assign_step_2",
-                            Component.translatable("block.golams.golam_interface"),
-                            String.valueOf(pos.getX()),
-                            String.valueOf(pos.getY()),
-                            String.valueOf(pos.getZ()),
-                            ((GolamInterfaceBE) be).inventory.getStackInSlot(0).getItem().getDescription()
-                    ), true);
+                        player.displayClientMessage(Component.translatable(
+                                "interaction.golams.golam_core_assign_step_2",
+                                Component.translatable("block.golams.golam_interface"),
+                                String.valueOf(pos.getX()),
+                                String.valueOf(pos.getY()),
+                                String.valueOf(pos.getZ()),
+                                ((GolamInterfaceBE) be).inventory.getStackInSlot(0).getItem().getDescription()
+                        ), true);
 
 
-                    return InteractionResult.SUCCESS;
+                        return InteractionResult.SUCCESS;
                     }
+                }
                 }
 
             if (state.is(Blocks.BUDDING_AMETHYST)) {

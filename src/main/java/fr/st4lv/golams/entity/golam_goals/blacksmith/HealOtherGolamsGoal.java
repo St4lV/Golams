@@ -2,6 +2,7 @@ package fr.st4lv.golams.entity.golam_goals.blacksmith;
 
 import fr.st4lv.golams.entity.GolamProfessions;
 import fr.st4lv.golams.entity.custom.GolamEntity;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.item.ItemStack;
@@ -14,6 +15,7 @@ public class HealOtherGolamsGoal extends Goal {
     private GolamEntity targetGolam;
     private final double speed;
     private final float searchRadius;
+    private int heal_cd = 0;
     private int cooldown = 0;
 
     public HealOtherGolamsGoal(GolamEntity blacksmith, double speed, float searchRadius) {
@@ -65,7 +67,17 @@ public class HealOtherGolamsGoal extends Goal {
         if (distanceSqr > 4.0) {
             moveTowardsTarget();
         } else {
-            healTargetGolam();
+            if (heal_cd > 0) {
+                heal_cd--;
+            }
+
+            if (targetGolam != null && targetGolam.isAlive() && targetGolam.getHealth() < targetGolam.getMaxHealth()) {
+                healTargetGolam();
+                if (targetGolam.getHealth() == targetGolam.getMaxHealth()){
+                    targetGolam=null;
+                    cooldown=50;
+                }
+            }
         }
     }
 
@@ -91,20 +103,13 @@ public class HealOtherGolamsGoal extends Goal {
     }
 
     private void healTargetGolam() {
-        if (hasSmoothBasalt()) {
-            int heal_cd = 0;
-            while (targetGolam != null && targetGolam.isAlive() && targetGolam.getHealth() < targetGolam.getMaxHealth()) {
-                if (heal_cd<=20) {
-                    heal_cd+=1;
-                } else {
-                    targetGolam.heal(GolamEntity.repair_value_by_smooth_basalt);
-                    removeSmoothBasalt();
-                    blacksmith.swing(InteractionHand.MAIN_HAND);
-                    heal_cd=0;
-                }
-            }
-            cooldown = 100;
-            targetGolam = null;
+        if (hasSmoothBasalt() && heal_cd == 0) {
+            targetGolam.heal(GolamEntity.repair_value_by_smooth_basalt);
+            removeSmoothBasalt();
+            blacksmith.playSound(SoundEvents.WOLF_ARMOR_REPAIR, 0.2F, 1.0F);
+            blacksmith.playSound(SoundEvents.BASALT_BREAK, 0.5F, 1.0F);
+            blacksmith.swing(InteractionHand.MAIN_HAND);
+            heal_cd =5;
         }
     }
 

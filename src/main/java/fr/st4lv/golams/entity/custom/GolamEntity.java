@@ -383,12 +383,15 @@ public class GolamEntity extends AbstractGolem implements InventoryCarrier, Neut
 
     protected InteractionResult mobInteract(Player player, InteractionHand hand) {
         ItemStack itemstack = player.getItemBySlot(EquipmentSlot.MAINHAND);
-
+        if (player.getCooldowns().isOnCooldown(itemstack.getItem())) {
+            return InteractionResult.FAIL;
+        }
         if (itemstack.is(Items.REDSTONE) && player.isCreative()) {
             GolamProfessions current = getTypeVariant();
             GolamProfessions next = GolamProfessions.byId((current.getId() + 1) % GolamProfessions.values().length);
             this.setVariant(next);
             updateGoals();
+            player.getCooldowns().addCooldown(itemstack.getItem(), 5);
             return InteractionResult.sidedSuccess(this.level().isClientSide);
 
         } else if (itemstack.is(Items.SMOOTH_BASALT)) {
@@ -402,8 +405,10 @@ public class GolamEntity extends AbstractGolem implements InventoryCarrier, Neut
                     newH = getMaxHealth();
                 }
                 itemstack.consume(1, player);
+                this.playSound(SoundEvents.WOLF_ARMOR_REPAIR, 0.2F, 1.0F);
+                this.playSound(SoundEvents.BASALT_BREAK, 0.5F, 1.0F);
                 setHealth(newH);
-
+                player.getCooldowns().addCooldown(itemstack.getItem(), 5);
                 return InteractionResult.sidedSuccess(this.level().isClientSide);
             }
         } else if (itemstack.is(Items.AIR)) {
@@ -427,6 +432,21 @@ public class GolamEntity extends AbstractGolem implements InventoryCarrier, Neut
                 return InteractionResult.SUCCESS;
             }
             return InteractionResult.PASS;
+        }else if (itemstack.is(Items.AMETHYST_BLOCK)) {
+            switch (getTypeVariant()) {
+                case BLACKSMITH :
+                    ItemStack stack = new ItemStack(Items.AMETHYST_SHARD);
+                    stack.setCount(2);
+                    itemstack.consume(1, player);
+                    this.playSound(SoundEvents.SMITHING_TABLE_USE, 0.2F, 1.0F);
+                    if (!player.getInventory().add(stack)) {
+                        player.drop(stack, false);
+                    }
+                    player.getCooldowns().addCooldown(itemstack.getItem(), 5);
+                    return InteractionResult.SUCCESS;
+                default:
+                    return InteractionResult.PASS;
+            }
         }/* else if (itemstack.is(Items.AMETHYST_SHARD)) {
             switch (getTypeVariant()) {
                 case BLACKSMITH :
