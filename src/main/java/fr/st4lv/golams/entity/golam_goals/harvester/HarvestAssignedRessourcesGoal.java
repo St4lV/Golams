@@ -38,6 +38,7 @@ public class HarvestAssignedRessourcesGoal extends Goal {
 
     @Override
     public boolean canUse() {
+        if (!entity.getInventory().isEmpty()) return false;
         if (cooldown > 0) {
             cooldown--;
             return false;
@@ -177,4 +178,7 @@ public class HarvestAssignedRessourcesGoal extends Goal {
         return targetBlock != null;
     }
 
+    public boolean isInCooldown(){
+        return cooldown > 0;
+    }
 }

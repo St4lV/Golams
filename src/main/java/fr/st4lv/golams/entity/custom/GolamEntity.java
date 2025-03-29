@@ -10,6 +10,7 @@ import fr.st4lv.golams.entity.golam_goals.cartographer.ReachPoiGoal;
 import fr.st4lv.golams.entity.golam_goals.deliverer.ExportItemGoal;
 import fr.st4lv.golams.entity.golam_goals.deliverer.InsertItemGoal;
 import fr.st4lv.golams.entity.golam_goals.guard.FollowAssignedGolamGoal;
+import fr.st4lv.golams.entity.golam_goals.harvester.DepositInventoryGoal;
 import fr.st4lv.golams.entity.golam_goals.harvester.HarvestAssignedRessourcesGoal;
 import fr.st4lv.golams.item.ModItems;
 import net.minecraft.core.BlockPos;
@@ -66,6 +67,8 @@ public class GolamEntity extends AbstractGolem implements InventoryCarrier, Neut
     private final SimpleContainer inventory = new SimpleContainer(9);
     private boolean persistenceRequired;
     private final List<AssignedBlock> assignedBlocks = new ArrayList<>();
+    public boolean shouldCompost;
+
 
     private static final EntityDataAccessor<String> GOLAM_PROFESSION =
             SynchedEntityData.defineId(GolamEntity.class, EntityDataSerializers.STRING);
@@ -113,7 +116,8 @@ public class GolamEntity extends AbstractGolem implements InventoryCarrier, Neut
                 this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, Mob.class, 5, false, false, (p_28879_) -> p_28879_ instanceof Enemy && !(p_28879_ instanceof Creeper)));
                 break;
             case HARVESTER:
-                this.goalSelector.addGoal(1, new HarvestAssignedRessourcesGoal(this,1.0));
+                this.goalSelector.addGoal(2, new HarvestAssignedRessourcesGoal(this,1.0));
+                this.goalSelector.addGoal(1, new DepositInventoryGoal(this,1.0));
             default:
                 break;
         }

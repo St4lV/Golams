@@ -14,6 +14,8 @@ import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 
+import java.util.Objects;
+
 public class InsertItemGoal extends Goal {
     private final GolamEntity entity;
     private final double speed;
@@ -126,7 +128,7 @@ public class InsertItemGoal extends Goal {
         BlockState state = chestEntity.getBlockState();
 
         if (state.getBlock() instanceof ChestBlock chestBlock) {
-            return ChestBlock.getContainer(chestBlock, state, level, chestEntity.getBlockPos(), true);
+            return ChestBlock.getContainer(chestBlock, state, Objects.requireNonNull(level), chestEntity.getBlockPos(), true);
         }
         return chestEntity;
     }
