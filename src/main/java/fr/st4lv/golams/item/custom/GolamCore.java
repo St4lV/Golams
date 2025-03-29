@@ -153,6 +153,17 @@ public class GolamCore extends Item {
                         break;
                     case HARVESTER:
                         if (!blockSelected) return InteractionResult.PASS;
+                        if (be instanceof GolamInterfaceBE golamInterface) {
+                            Item item = golamInterface.inventory.getStackInSlot(0).getItem();
+                            if (item == Items.AIR) {
+                                selectedGolam.addAssignedBlock(pos, item);
+                                golamInterface.addAssignedGolams(selectedGolam.getUUID());
+                                selectedGolam.updateGoals();
+                                selectedGolam = null;
+                                player.getCooldowns().addCooldown(this, 5);
+                                return InteractionResult.SUCCESS;
+                            } else return InteractionResult.PASS;
+                        }
                         if (    //CROPS
                                 block.getBlock().defaultBlockState().is(BlockTags.CROPS)
                                 ||block.getBlock()==Blocks.SWEET_BERRY_BUSH
@@ -161,6 +172,7 @@ public class GolamCore extends Item {
                                 ||block.getBlock()==Blocks.NETHER_WART
                                 ||block.getBlock()==Blocks.ATTACHED_MELON_STEM
                                 ||block.getBlock()== Blocks.ATTACHED_PUMPKIN_STEM
+                                ||block.getBlock()== Blocks.COMPOSTER
 
 
                                 //TREES
@@ -177,9 +189,10 @@ public class GolamCore extends Item {
                             Item item;
                             if (block.getBlock()== Blocks.ATTACHED_MELON_STEM){
                                     item = Items.MELON_SEEDS;
-                            }
-                            else if (block.getBlock()== Blocks.ATTACHED_PUMPKIN_STEM){
+                            } else if (block.getBlock()== Blocks.ATTACHED_PUMPKIN_STEM){
                                 item = Items.PUMPKIN_SEEDS;
+                            } else if (block.getBlock()== Blocks.TORCHFLOWER){
+                                item = Items.TORCHFLOWER_SEEDS;
                             } else {
                                 item = block.getBlock().asItem();
                             }
