@@ -10,16 +10,13 @@ once you'll spawn your first Golam, **shift-left-click** on it to take it in you
 
 ## Golam professions :
 
-### Crafting profession smithing templates will give a profession to your Golams.
-
 ![Golams professions recipes](https://media.forgecdn.net/attachments/1134/784/golam_profession_craft-png.png)
 
 *   _Upgrading unassigned Golams to professions Golams._
 
 ### Blacksmith Golam :
 
-*   The blacksmith golam can repairs others golams using smooth basalt ! Assign it to a smooth basalt assigned Golam Interface with a Golam Core to refill its inventory !
-It can also transform amethyst blocks to amethyst shards !
+*   The blacksmith golam can repairs others golams using smooth basalt ! Assign it to a smooth basalt assigned Golam Interface with a Golam Core to refill its inventory ! It can also transform amethyst blocks to amethyst shards !
 
 ![blacksmith golam](https://media.forgecdn.net/attachments/1144/507/blacksmith_demo-webp.webp)
 
@@ -33,6 +30,8 @@ _(in the future it will be able to craft Golams without budding amethyst, WIP!)_
 
 ![Cartographer usage](https://media.forgecdn.net/attachments/1140/229/cartographeruse_270325_0447-ezgif-com-optiwebp.webp)
 
+*   _Finding treasures with Cartographer Golam !_
+
 ### Deliverer Golam :
 
 *   The deliverer golam can take items from empty Golams Interfaces and deliver them to item assigned Golam Interfaces ! Assign it to a Golam Interfaces with a Golam Core to start a new logistic era !
@@ -45,6 +44,10 @@ _(in the future it will be able to craft Golams without budding amethyst, WIP!)_
 
 *   The guard golam can defend others Golams against hostile mobs, including you ! take care of this robust variant who's 2 times more resistant than its friends ! they will naturally follow others non guards golams when there is no menace.
 *   It can be assignated to another golam to follow it. Right-click on the guard with a golam core then click a non-guard golam !
+
+![guard golam](https://media.forgecdn.net/attachments/1144/552/guard_golam-webp.webp)
+
+*   _Bad zombies !_
 
 Downloads : 
 ==========
