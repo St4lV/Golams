@@ -44,6 +44,7 @@ _(in the future it will be able to craft Golams without budding amethyst, WIP!)_
 
 *   The guard golam can defend others Golams against hostile mobs, including you ! take care of this robust variant who's 2 times more resistant than its friends ! they will naturally follow others non guards golams when there is no menace.
 *   It can be assignated to another golam to follow it. Right-click on the guard with a golam core then click a non-guard golam !
+
 Downloads : 
 ==========
 
