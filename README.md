@@ -19,10 +19,11 @@ once you'll spawn your first Golam, **shift-left-click** on it to take it in you
 ### Blacksmith Golam :
 
 *   The blacksmith golam can repairs others golams using smooth basalt ! Assign it to a smooth basalt assigned Golam Interface with a Golam Core to refill its inventory !
+It can also transform amethyst blocks to amethyst shards !
 
-![blacksmith golam](https://media.forgecdn.net/attachments/1134/792/2025-03-23_03-06-03-png.png)
+![blacksmith golam](https://media.forgecdn.net/attachments/1144/507/blacksmith_demo-webp.webp)
 
-*   _A blacksmith golam on its way to heal a guard_
+*   _Healing another Golam with basalt_
 
 _(in the future it will be able to craft Golams without budding amethyst, WIP!)_
 
@@ -36,9 +37,9 @@ _(in the future it will be able to craft Golams without budding amethyst, WIP!)_
 
 *   The deliverer golam can take items from empty Golams Interfaces and deliver them to item assigned Golam Interfaces ! Assign it to a Golam Interfaces with a Golam Core to start a new logistic era !
 
-![deliverer golam](https://media.forgecdn.net/attachments/1134/793/2025-03-23_03-05-15-png.png)
+![deliverer golam](https://media.forgecdn.net/attachments/1144/477/deliverer_demo-webp.webp)
 
-*   _A deliverer golam on it's way depositing stone_
+*   _Sorting logs and sticks with Deliverer Golam_
 
 ### Guard Golam :
 
