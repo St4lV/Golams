@@ -135,6 +135,8 @@ public class HarvestAssignedRessourcesGoal extends Goal {
                     ||blockState.getBlock() == Blocks.ATTACHED_MELON_STEM
                     ||blockState.getBlock() == Blocks.ATTACHED_PUMPKIN_STEM
             ) {
+                // CROPS
+
                 if (blockState.getBlock() == Blocks.TORCHFLOWER) {
                     level.setBlock(targetBlock, Blocks.TORCHFLOWER_CROP.defaultBlockState(), 3);
                 } else if (blockState.getBlock() == Blocks.ATTACHED_MELON_STEM || blockState.getBlock() == Blocks.ATTACHED_PUMPKIN_STEM) {
@@ -173,81 +175,91 @@ public class HarvestAssignedRessourcesGoal extends Goal {
                 }
             }
             if (blockState.is(BlockTags.LOGS)) {
+
+                //LOGS / STEMS
+
                 drops.clear();
+                Block replantBlock=null;
+
+                if (blockState.getBlock() == Blocks.OAK_LOG) replantBlock = Blocks.OAK_SAPLING;
+                if (blockState.getBlock() == Blocks.SPRUCE_LOG) replantBlock = Blocks.SPRUCE_SAPLING;
+                if (blockState.getBlock() == Blocks.BIRCH_LOG) replantBlock = Blocks.BIRCH_SAPLING;
+                if (blockState.getBlock() == Blocks.JUNGLE_LOG) replantBlock = Blocks.JUNGLE_SAPLING;
+                if (blockState.getBlock() == Blocks.ACACIA_LOG) replantBlock = Blocks.ACACIA_SAPLING;
+                if (blockState.getBlock() == Blocks.DARK_OAK_LOG) replantBlock = Blocks.DARK_OAK_SAPLING;
+                if (blockState.getBlock() == Blocks.CRIMSON_STEM) replantBlock = Blocks.CRIMSON_FUNGUS;
+                if (blockState.getBlock() == Blocks.WARPED_STEM) replantBlock = Blocks.WARPED_FUNGUS;
+                if (blockState.getBlock() == Blocks.MANGROVE_LOG) replantBlock = Blocks.MANGROVE_PROPAGULE;
+                if (blockState.getBlock() == Blocks.CHERRY_LOG) replantBlock = Blocks.CHERRY_SAPLING;
+
                 if (!blocksToBreak.contains(targetBlock)) {
                     blocksToBreak.add(targetBlock);
                 }
-                if (blockState.getBlock() == Blocks.OAK_LOG) {
-                    Queue<BlockPos> queue = new LinkedList<>();
-                    Set<BlockPos> visited = new HashSet<>();
-                    queue.add(targetBlock.above());
+                boolean isBigTree = false;
 
-                    int height = 0;
+                for (int i = 0; i >= -1; --i) {
+                    for (int j = 0; j >= -1; --j) {
+                        if (isTwoByTwoTree(blockState, level, targetBlock, i, j)) {
+                            isBigTree = true;
+                            treeBaseBlocks.add(targetBlock.offset(i, 0, j));
+                            treeBaseBlocks.add(targetBlock.offset(i + 1, 0, j));
+                            treeBaseBlocks.add(targetBlock.offset(i, 0, j + 1));
+                            treeBaseBlocks.add(targetBlock.offset(i + 1, 0, j + 1));
+                        }
+                    }
+                }
 
-                    while (!queue.isEmpty()) {
-                        BlockPos currentPos = queue.poll();
-                        BlockState currentState = level.getBlockState(currentPos);
+                if (!isBigTree && !treeBaseBlocks.contains(targetBlock)) {
+                    treeBaseBlocks.add(targetBlock);
+                }
 
-                        if (currentState.is(Blocks.OAK_LOG) && !blocksToBreak.contains(currentPos)) {
-                            blocksToBreak.add(currentPos);
-                            visited.add(currentPos);
-                            if (height >= 3) {
-                                for (int x = -1; x <= 1; x++) {
-                                    for (int y = -1; y <= 1; y++) {
-                                        for (int z = -1; z <= 1; z++) {
-                                            if (x == 0 && y == 0 && z == 0) continue;
+                Queue<BlockPos> queue = new LinkedList<>();
+                Set<BlockPos> visited = new HashSet<>();
+                queue.add(targetBlock.above());
 
-                                            BlockPos newPos = currentPos.offset(x, y, z);
-                                            if (!visited.contains(newPos) && level.getBlockState(newPos).is(Blocks.OAK_LOG)) {
-                                                queue.add(newPos);
-                                                visited.add(newPos);
-                                            }
+                int height = 0;
+
+                while (!queue.isEmpty()) {
+                    BlockPos currentPos = queue.poll();
+                    BlockState currentState = level.getBlockState(currentPos);
+
+                    if (currentState.is(BlockTags.LOGS) && !blocksToBreak.contains(currentPos)) {
+                        blocksToBreak.add(currentPos);
+                        visited.add(currentPos);
+
+                        if (height >= 3) {
+                            for (int x = -2; x <= 2; x++) {
+                                for (int y = -1; y <= 1; y++) {
+                                    for (int z = -2; z <= 2; z++) {
+                                        if (x == 0 && y == 0 && z == 0) continue;
+                                        BlockPos newPos = currentPos.offset(x, y, z);
+                                        if (!visited.contains(newPos) && level.getBlockState(newPos).is(BlockTags.LOGS)) {
+                                            queue.add(newPos);
+                                            visited.add(newPos);
                                         }
                                     }
                                 }
                             }
-                            BlockPos abovePos = currentPos.above();
-                            if (!visited.contains(abovePos) && level.getBlockState(abovePos).is(Blocks.OAK_LOG)) {
-                                queue.add(abovePos);
-                                visited.add(abovePos);
-                            }
-
-                            height++;
                         }
+
+                        BlockPos abovePos = currentPos.above();
+                        if (!visited.contains(abovePos) && level.getBlockState(abovePos).is(BlockTags.LOGS)) {
+                            queue.add(abovePos);
+                            visited.add(abovePos);
+                        }
+
+                        height++;
                     }
                 }
-                else {
-                    boolean isBigTree = false;
-                    for (int i = 0; i >= -1; --i) {
-                        for (int j = 0; j >= -1; --j) {
-                            if (isTwoByTwoTree(blockState, level, targetBlock, i, j)) {
-                                isBigTree = true;
-                                BlockPos basePos1 = targetBlock.offset(i, 0, j);
-                                BlockPos basePos2 = basePos1.offset(1, 0, 0);
-                                BlockPos basePos3 = basePos1.offset(0, 0, 1);
-                                BlockPos basePos4 = basePos1.offset(1, 0, 1);
-                                treeBaseBlocks.add(basePos1);
-                                treeBaseBlocks.add(basePos2);
-                                treeBaseBlocks.add(basePos3);
-                                treeBaseBlocks.add(basePos4);
-                            }
+                for (BlockPos base : treeBaseBlocks) {
+                    BlockPos currentPos = base;
+                    while (level.getBlockState(currentPos).is(BlockTags.LOGS)
+                            || level.getBlockState(currentPos).is(BlockTags.LEAVES)
+                            || level.getBlockState(currentPos).is(BlockTags.WART_BLOCKS)) {
+                        if (!blocksToBreak.contains(currentPos)) {
+                            blocksToBreak.add(currentPos);
                         }
-                    }
-                    if (!isBigTree) {
-                        if (!treeBaseBlocks.contains(targetBlock)) {
-                            treeBaseBlocks.add(targetBlock);
-                        }
-                    }
-                    for (BlockPos base : treeBaseBlocks) {
-                        BlockPos currentPos = base;
-                        while (level.getBlockState(currentPos).is(BlockTags.LOGS)
-                                || level.getBlockState(currentPos).is(BlockTags.LEAVES)
-                                || level.getBlockState(currentPos).is(BlockTags.WART_BLOCKS)) {
-                            if (!blocksToBreak.contains(currentPos)) {
-                                blocksToBreak.add(currentPos);
-                            }
-                            currentPos = currentPos.above();
-                        }
+                        currentPos = currentPos.above();
                     }
                 }
 
@@ -272,7 +284,6 @@ public class HarvestAssignedRessourcesGoal extends Goal {
                 }
                 for (BlockPos pos : leavesToBreak) {
                     BlockState state = level.getBlockState(pos);
-                    System.out.println(state);
                     List<ItemStack> blockDrops = Block.getDrops(state, serverLevel, pos, level.getBlockEntity(pos), entity, ItemStack.EMPTY);
                     level.destroyBlock(pos, false);
                     drops.addAll(blockDrops);
@@ -280,12 +291,20 @@ public class HarvestAssignedRessourcesGoal extends Goal {
                 leavesToBreak.clear();
                 for (BlockPos pos : blocksToBreak) {
                     BlockState state = level.getBlockState(pos);
-                    System.out.println(state);
                     List<ItemStack> blockDrops = Block.getDrops(state, serverLevel, pos, level.getBlockEntity(pos), entity, ItemStack.EMPTY);
                     level.destroyBlock(pos, false);
                     drops.addAll(blockDrops);
                 }
                 blocksToBreak.clear();
+
+                if (replantBlock!=null){
+                    for (BlockPos basePos : treeBaseBlocks) {
+                        if (level.getBlockState(basePos).isAir()) {
+                            level.setBlock(basePos, replantBlock.defaultBlockState(), 3);
+                        }
+                    }
+                }
+
                 if (assignBlockFromList() != null) {
                     targetBlock = assignBlockFromList();
                 } else {
