@@ -176,11 +176,11 @@ public class GolamCore extends Item {
 
 
                                 //TREES
-                                /*||block.getBlock().defaultBlockState().is(BlockTags.SAPLINGS)
+                                ||block.getBlock().defaultBlockState().is(BlockTags.SAPLINGS)
                                 ||block.getBlock()==Blocks.BROWN_MUSHROOM
                                 ||block.getBlock()==Blocks.RED_MUSHROOM
                                 ||block.getBlock()==Blocks.CRIMSON_FUNGUS
-                                ||block.getBlock()==Blocks.WARPED_FUNGUS*/
+                                ||block.getBlock()==Blocks.WARPED_FUNGUS
 
                                 //BEES
                                 /*||block.getBlock()==Blocks.BEE_NEST
