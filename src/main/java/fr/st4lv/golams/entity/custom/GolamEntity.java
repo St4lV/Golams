@@ -26,6 +26,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.SimpleContainer;
@@ -419,7 +420,8 @@ public class GolamEntity extends AbstractGolem implements InventoryCarrier, Neut
                 return InteractionResult.sidedSuccess(this.level().isClientSide);
             }
         } else if (itemstack.is(Items.AIR)) {
-            ItemStack golamItem = getItemBySlot(EquipmentSlot.OFFHAND);
+            ItemStack golamItem = getItemBySlot(EquipmentSlot.MAINHAND);
+            if (getTypeVariant()==GolamProfessions.CARTOGRAPHER) golamItem = getItemBySlot(EquipmentSlot.OFFHAND);
             if (!golamItem.isEmpty()) {
                 ItemStack item = golamItem.copyWithCount(1);
                 player.setItemSlot(EquipmentSlot.MAINHAND, item);
@@ -429,7 +431,18 @@ public class GolamEntity extends AbstractGolem implements InventoryCarrier, Neut
             return InteractionResult.PASS;
 
 
-        } else if (itemstack.is(Items.FILLED_MAP) && getTypeVariant()==GolamProfessions.CARTOGRAPHER) {
+        } else if (getTypeVariant()==GolamProfessions.HARVESTER &&(itemstack.is(ItemTags.AXES)||itemstack.is(ItemTags.HOES))) {
+
+            ItemStack golamItem = getItemBySlot(EquipmentSlot.MAINHAND);
+            if (golamItem.isEmpty()) {
+
+                setItemSlot(EquipmentSlot.MAINHAND, itemstack.copyWithCount(1));
+                itemstack.shrink(1);
+                return InteractionResult.SUCCESS;
+            }
+            return InteractionResult.PASS;
+            
+        }else if (itemstack.is(Items.FILLED_MAP) && getTypeVariant()==GolamProfessions.CARTOGRAPHER) {
 
             ItemStack golamItem = getItemBySlot(EquipmentSlot.OFFHAND);
             if (golamItem.isEmpty()) {
