@@ -30,6 +30,8 @@ _(in the future it will be able to craft Golams without budding amethyst, WIP!)_
 
 *   The cartographer golam can points to the direction of interests points on the maps given to him when right clicked with a Golam Core. If close enough the golam will stand at coordinates given on the map, revealing treasures!
 
+![Cartographer usage](https://media.forgecdn.net/attachments/1140/229/cartographeruse_270325_0447-ezgif-com-optiwebp.webp)
+
 ### Deliverer Golam :
 
 *   The deliverer golam can take items from empty Golams Interfaces and deliver them to item assigned Golam Interfaces ! Assign it to a Golam Interfaces with a Golam Core to start a new logistic era !
@@ -37,7 +39,6 @@ _(in the future it will be able to craft Golams without budding amethyst, WIP!)_
 ![deliverer golam](https://media.forgecdn.net/attachments/1134/793/2025-03-23_03-05-15-png.png)
 
 *   _A deliverer golam on it's way depositing stone_
-
 
 ### Guard Golam :
 
