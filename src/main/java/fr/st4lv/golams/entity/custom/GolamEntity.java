@@ -220,6 +220,16 @@ public class GolamEntity extends AbstractGolem implements InventoryCarrier, Neut
         return null;
     }
 
+    public Item findAssignedBlockData(BlockPos blockpos){
+
+        for (AssignedBlock ab : assignedBlocks) {
+            if (ab.getBlockPos() == blockpos) {
+                return ab.getItem();
+            }
+        }
+        return null;
+    }
+
     public List<AssignedBlock> getAssignedBlocks() {
         return this.assignedBlocks;
     }
@@ -441,7 +451,7 @@ public class GolamEntity extends AbstractGolem implements InventoryCarrier, Neut
                 return InteractionResult.SUCCESS;
             }
             return InteractionResult.PASS;
-            
+
         }else if (itemstack.is(Items.FILLED_MAP) && getTypeVariant()==GolamProfessions.CARTOGRAPHER) {
 
             ItemStack golamItem = getItemBySlot(EquipmentSlot.OFFHAND);

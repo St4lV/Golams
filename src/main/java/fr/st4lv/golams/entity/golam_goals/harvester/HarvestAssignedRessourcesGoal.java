@@ -8,7 +8,9 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ai.goal.Goal;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.*;
@@ -111,7 +113,7 @@ public class HarvestAssignedRessourcesGoal extends Goal {
                 }
             }
             else if (itemstack.is(ItemTags.AXES)) {
-                if (blockState.is(BlockTags.LOGS)) {
+                if (blockState.is(BlockTags.LOGS)|| blockState.is(Blocks.MUSHROOM_STEM)) {
                     return pos;
                 }
             }
@@ -188,13 +190,13 @@ public class HarvestAssignedRessourcesGoal extends Goal {
                 }
                  }
             if (itemstack.is(ItemTags.AXES)){
-                if (blockState.is(BlockTags.LOGS)) {
+                if (blockState.is(BlockTags.LOGS)|| blockState.is(Blocks.MUSHROOM_STEM)) {
 
                     //LOGS / STEMS
 
                     drops.clear();
                     Block replantBlock=null;
-
+                    Item assignedItem = entity.findAssignedBlockData(targetBlock);
                     if (blockState.getBlock() == Blocks.OAK_LOG) replantBlock = Blocks.OAK_SAPLING;
                     if (blockState.getBlock() == Blocks.SPRUCE_LOG) replantBlock = Blocks.SPRUCE_SAPLING;
                     if (blockState.getBlock() == Blocks.BIRCH_LOG) replantBlock = Blocks.BIRCH_SAPLING;
@@ -205,6 +207,13 @@ public class HarvestAssignedRessourcesGoal extends Goal {
                     if (blockState.getBlock() == Blocks.WARPED_STEM) replantBlock = Blocks.WARPED_FUNGUS;
                     if (blockState.getBlock() == Blocks.MANGROVE_LOG) replantBlock = Blocks.MANGROVE_PROPAGULE;
                     if (blockState.getBlock() == Blocks.CHERRY_LOG) replantBlock = Blocks.CHERRY_SAPLING;
+                    if (blockState.getBlock() == Blocks.MUSHROOM_STEM) {
+                        if (assignedItem== Items.RED_MUSHROOM) {
+                            replantBlock = Blocks.RED_MUSHROOM;
+                        } else if (assignedItem== Items.BROWN_MUSHROOM) {
+                            replantBlock = Blocks.BROWN_MUSHROOM;
+                        }
+                    }
 
                     if (!blocksToBreak.contains(targetBlock)) {
                         blocksToBreak.add(targetBlock);
@@ -235,28 +244,33 @@ public class HarvestAssignedRessourcesGoal extends Goal {
                     while (!queue.isEmpty()) {
                         BlockPos currentPos = queue.poll();
                         BlockState currentState = level.getBlockState(currentPos);
+                        int deltaX = Math.abs(currentPos.getX() - targetBlock.getX());
+                        int deltaZ = Math.abs(currentPos.getZ() - targetBlock.getZ());
+                        int deltaY = currentPos.getY() - targetBlock.getY();
 
-                        if (currentState.is(BlockTags.LOGS) && !blocksToBreak.contains(currentPos)) {
-                            blocksToBreak.add(currentPos);
-                            visited.add(currentPos);
+                        if (deltaX <= 5 && deltaZ <= 5 && deltaY >= 1 && deltaY <= 50) {
+                            if ((currentState.is(BlockTags.LOGS)||currentState.is(Blocks.MUSHROOM_STEM)) && !blocksToBreak.contains(currentPos)) {
+                                blocksToBreak.add(currentPos);
+                                visited.add(currentPos);
 
-                            for (int x = -2; x <= 2; x++) {
-                                for (int y = -1; y <= 1; y++) {
-                                    for (int z = -2; z <= 2; z++) {
-                                        if (x == 0 && y == 0 && z == 0) continue;
-                                        BlockPos newPos = currentPos.offset(x, y, z);
-                                        if (!visited.contains(newPos) && level.getBlockState(newPos).is(BlockTags.LOGS)) {
-                                            queue.add(newPos);
-                                            visited.add(newPos);
+                                for (int x = -2; x <= 2; x++) {
+                                    for (int y = -1; y <= 1; y++) {
+                                        for (int z = -2; z <= 2; z++) {
+                                            if (x == 0 && y == 0 && z == 0) continue;
+                                            BlockPos newPos = currentPos.offset(x, y, z);
+                                            if (!visited.contains(newPos) && (level.getBlockState(newPos).is(BlockTags.LOGS)|| level.getBlockState(currentPos).is(Blocks.MUSHROOM_STEM))) {
+                                                queue.add(newPos);
+                                                visited.add(newPos);
+                                            }
                                         }
                                     }
                                 }
-                            }
 
-                            BlockPos abovePos = currentPos.above();
-                            if (!visited.contains(abovePos) && level.getBlockState(abovePos).is(BlockTags.LOGS)) {
-                                queue.add(abovePos);
-                                visited.add(abovePos);
+                                BlockPos abovePos = currentPos.above();
+                                if (!visited.contains(abovePos) && (level.getBlockState(abovePos).is(BlockTags.LOGS)|| level.getBlockState(currentPos).is(Blocks.MUSHROOM_STEM))) {
+                                    queue.add(abovePos);
+                                    visited.add(abovePos);
+                                }
                             }
                         }
                     }
@@ -264,7 +278,10 @@ public class HarvestAssignedRessourcesGoal extends Goal {
                         BlockPos currentPos = base;
                         while (level.getBlockState(currentPos).is(BlockTags.LOGS)
                                 || level.getBlockState(currentPos).is(BlockTags.LEAVES)
-                                || level.getBlockState(currentPos).is(BlockTags.WART_BLOCKS)) {
+                                || level.getBlockState(currentPos).is(BlockTags.WART_BLOCKS)
+                                || level.getBlockState(currentPos).is(Blocks.MUSHROOM_STEM)
+                                || level.getBlockState(currentPos).is(Blocks.RED_MUSHROOM_BLOCK)
+                                || level.getBlockState(currentPos).is(Blocks.BROWN_MUSHROOM_BLOCK)) {
                             if (!blocksToBreak.contains(currentPos)) {
                                 blocksToBreak.add(currentPos);
                             }
@@ -280,13 +297,20 @@ public class HarvestAssignedRessourcesGoal extends Goal {
                                 for (int z = -4; z <= 4; z++) {
                                     BlockPos pos = logPos.offset(x, y, z);
                                     BlockState state = level.getBlockState(pos);
-                                    if ((state.is(BlockTags.LEAVES) || state.is(BlockTags.WART_BLOCKS)
-                                            || state.getBlock() == Blocks.SHROOMLIGHT
-                                            || state.getBlock() == Blocks.WEEPING_VINES)
-                                            && !leavesToBreak.contains(pos)) {
-                                        leavesToBreak.add(pos);
-                                    }
+                                    int deltaX = Math.abs(pos.getX() - targetBlock.getX());
+                                    int deltaZ = Math.abs(pos.getZ() - targetBlock.getZ());
+                                    int deltaY = pos.getY() - targetBlock.getY();
 
+                                    if (deltaX <= 8 && deltaZ <= 8 && deltaY >= 1 && deltaY <= 50) {
+                                        if ((state.is(BlockTags.LEAVES) || state.is(BlockTags.WART_BLOCKS)
+                                                || state.getBlock() == Blocks.SHROOMLIGHT
+                                                || state.getBlock() == Blocks.WEEPING_VINES
+                                                || state.getBlock() == Blocks.RED_MUSHROOM_BLOCK
+                                                || state.getBlock() == Blocks.BROWN_MUSHROOM_BLOCK)
+                                                && !leavesToBreak.contains(pos)) {
+                                            leavesToBreak.add(pos);
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -305,8 +329,8 @@ public class HarvestAssignedRessourcesGoal extends Goal {
                         drops.addAll(blockDrops);
                     }
                     blocksToBreak.clear();
-
-                    if (replantBlock!=null){
+                    BlockState replantOn = level.getBlockState(targetBlock.below());
+                    if (replantBlock!=null && replantOn.is(BlockTags.DIRT)){
                         for (BlockPos basePos : treeBaseBlocks) {
                             if (level.getBlockState(basePos).isAir()) {
                                 level.setBlock(basePos, replantBlock.defaultBlockState(), 3);
