@@ -7,6 +7,7 @@ import fr.st4lv.golams.entity.custom.GolamEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -154,8 +155,9 @@ public class GolamCore extends Item {
                     case HARVESTER:
                         if (!blockSelected) return InteractionResult.PASS;
                         if (be instanceof GolamInterfaceBE golamInterface) {
-                            Item item = golamInterface.inventory.getStackInSlot(0).getItem();
-                            if (item == Items.AIR) {
+                            ItemStack itemStack =golamInterface.inventory.getStackInSlot(0);
+                            Item item = itemStack.getItem();
+                            if (item == Items.AIR||itemStack.is(ItemTags.HOES)||itemStack.is(ItemTags.AXES)) {
                                 selectedGolam.addAssignedBlock(pos, item);
                                 golamInterface.addAssignedGolams(selectedGolam.getUUID());
                                 selectedGolam.updateGoals();

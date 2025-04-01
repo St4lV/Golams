@@ -4,6 +4,7 @@ import fr.st4lv.golams.block.entity.GolamInterfaceBE;
 import fr.st4lv.golams.data_component.ModDataComponents;
 import fr.st4lv.golams.entity.GolamProfessions;
 import fr.st4lv.golams.entity.golam_goals.FollowOtherGolamsGoal;
+import fr.st4lv.golams.entity.golam_goals.RestockToolGoal;
 import fr.st4lv.golams.entity.golam_goals.blacksmith.HealOtherGolamsGoal;
 import fr.st4lv.golams.entity.golam_goals.blacksmith.RestockSmoothBasaltGoal;
 import fr.st4lv.golams.entity.golam_goals.cartographer.ReachPoiGoal;
@@ -69,7 +70,7 @@ public class GolamEntity extends AbstractGolem implements InventoryCarrier, Neut
     private boolean persistenceRequired;
     private final List<AssignedBlock> assignedBlocks = new ArrayList<>();
     public boolean shouldCompost;
-
+    public Item assignedTool = Items.AIR;
 
     private static final EntityDataAccessor<String> GOLAM_PROFESSION =
             SynchedEntityData.defineId(GolamEntity.class, EntityDataSerializers.STRING);
@@ -119,6 +120,7 @@ public class GolamEntity extends AbstractGolem implements InventoryCarrier, Neut
             case HARVESTER:
                 this.goalSelector.addGoal(2, new HarvestAssignedRessourcesGoal(this,1.0));
                 this.goalSelector.addGoal(1, new DepositInventoryGoal(this,1.0));
+                this.goalSelector.addGoal(1, new RestockToolGoal(this,1.0));
             default:
                 break;
         }
@@ -430,6 +432,7 @@ public class GolamEntity extends AbstractGolem implements InventoryCarrier, Neut
                 return InteractionResult.sidedSuccess(this.level().isClientSide);
             }
         } else if (itemstack.is(Items.AIR)) {
+            this.assignedTool=itemstack.getItem();
             ItemStack golamItem = getItemBySlot(EquipmentSlot.MAINHAND);
             if (getTypeVariant()==GolamProfessions.CARTOGRAPHER) golamItem = getItemBySlot(EquipmentSlot.OFFHAND);
             if (!golamItem.isEmpty()) {
@@ -445,7 +448,7 @@ public class GolamEntity extends AbstractGolem implements InventoryCarrier, Neut
 
             ItemStack golamItem = getItemBySlot(EquipmentSlot.MAINHAND);
             if (golamItem.isEmpty()) {
-
+                this.assignedTool=itemstack.getItem();
                 setItemSlot(EquipmentSlot.MAINHAND, itemstack.copyWithCount(1));
                 itemstack.shrink(1);
                 return InteractionResult.SUCCESS;

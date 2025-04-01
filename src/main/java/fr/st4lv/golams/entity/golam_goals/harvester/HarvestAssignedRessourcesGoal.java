@@ -4,6 +4,7 @@ import fr.st4lv.golams.entity.custom.GolamEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -45,6 +46,7 @@ public class HarvestAssignedRessourcesGoal extends Goal {
     @Override
     public boolean canUse() {
         if (!entity.getInventory().isEmpty()) return false;
+        if (entity.getItemBySlot(EquipmentSlot.MAINHAND).isEmpty()) return false;
         if (cooldown > 0) {
             cooldown--;
             return false;
@@ -124,6 +126,7 @@ public class HarvestAssignedRessourcesGoal extends Goal {
     @Override
     public void tick() {
         action_cooldown++;
+        if (entity.getItemBySlot(EquipmentSlot.MAINHAND).isEmpty())return;
         if (targetBlock == null) return;
         entity.getNavigation().moveTo(
                 targetBlock.getX() + 0.5,
@@ -181,12 +184,7 @@ public class HarvestAssignedRessourcesGoal extends Goal {
                         level.setBlock(targetBlock, blockState.getBlock().defaultBlockState(), 3);
                     }
                     harvesting=false;
-
-                    if (assignBlockFromList() != null) {
-                        targetBlock = assignBlockFromList();
-                    } else {
-                        targetBlock = null;
-                    }
+                    itemstack.setDamageValue((itemstack.getDamageValue())+1);
                 }
                  }
             if (itemstack.is(ItemTags.AXES)){
@@ -327,6 +325,7 @@ public class HarvestAssignedRessourcesGoal extends Goal {
                         List<ItemStack> blockDrops = Block.getDrops(state, serverLevel, pos, level.getBlockEntity(pos), entity, ItemStack.EMPTY);
                         level.destroyBlock(pos, false);
                         drops.addAll(blockDrops);
+                        itemstack.setDamageValue((itemstack.getDamageValue())+1);
                     }
                     blocksToBreak.clear();
                     BlockState replantOn = level.getBlockState(targetBlock.below());
@@ -338,13 +337,18 @@ public class HarvestAssignedRessourcesGoal extends Goal {
                         }
                     }
                     treeBaseBlocks.clear();
-                    if (assignBlockFromList() != null) {
-                        targetBlock = assignBlockFromList();
-                    } else {
-                        targetBlock = null;
-                    }
-
                 }
+            }
+            if (itemstack.getDamageValue()>=itemstack.getMaxDamage()){
+                entity.setItemSlot(EquipmentSlot.MAINHAND,ItemStack.EMPTY);
+                entity.playSound(SoundEvents.ITEM_BREAK, 1.0F, 1.0F);
+                cooldown=100;
+                return;
+            }
+            if (assignBlockFromList() != null) {
+                targetBlock = assignBlockFromList();
+            } else {
+                targetBlock = null;
             }
             action_cooldown = 0;
             harvesting=false;
