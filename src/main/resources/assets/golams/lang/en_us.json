@@ -20,5 +20,8 @@
   "interaction.golams.golam_core_cartographer_no_filled_map": "This Golam needs to have a %s to be configured",
   "interaction.golams.golam_core_guard_golams_assign_step_1": "Golam selected ! Click on a %s to assign.",
   "interaction.golams.golam_core_guard_golams_assign_step_2": "Assigned to %s successfully",
+  "interaction.golams.golam_core_assign_harvester_no_tool": "This Golam needs a tool to assigned",
+  "interaction.golams.golam_core_assign_harvester_hoe_step_1": "Golam selected ! Click on a %s or crops to assign.",
+  "interaction.golams.golam_core_assign_harvester_axe_step_1": "Golam selected ! Click on a %s, saplings, mushrooms or fungus to assign.",
   "interaction.golams.golam_core_harvester_assign_step_2":"Assigned %s at (%s,%s,%s)"
 }

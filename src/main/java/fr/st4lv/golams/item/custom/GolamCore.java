@@ -96,9 +96,20 @@ public class GolamCore extends Item {
                             guardGolamSelect = true;
                             player.displayClientMessage(Component.translatable("interaction.golams.golam_core_guard_golams_assign_step_1", Component.translatable("entity.golams.golam")), true);
                             break;
-                        case BLACKSMITH,DELIVERER,HARVESTER:
+                        case BLACKSMITH,DELIVERER:
                             player.displayClientMessage(Component.translatable("interaction.golams.golam_core_assign_step_1", Component.translatable("block.golams.golam_interface")), true);
                             blockSelected = true;
+                            break;
+                        case HARVESTER:
+                            if (selectedGolam.assignedTool==Items.AIR){
+                                player.displayClientMessage(Component.translatable("interaction.golams.golam_core_assign_harvester_no_tool"), true);
+                            } else if (selectedGolam.assignedTool.builtInRegistryHolder().is(ItemTags.HOES)) {
+                                blockSelected = true;
+                                player.displayClientMessage(Component.translatable("interaction.golams.golam_core_assign_harvester_hoe_step_1", Component.translatable("block.golams.golam_interface")), true);
+                            } else if (selectedGolam.assignedTool.builtInRegistryHolder().is(ItemTags.AXES)){
+                                blockSelected = true;
+                                player.displayClientMessage(Component.translatable("interaction.golams.golam_core_assign_harvester_axe_step_1", Component.translatable("block.golams.golam_interface")), true);
+                            }
                             break;
                         default:
                             return InteractionResult.PASS;
@@ -156,44 +167,54 @@ public class GolamCore extends Item {
                         if (!blockSelected) return InteractionResult.PASS;
                         if (be instanceof GolamInterfaceBE golamInterface) {
                             ItemStack itemStack =golamInterface.inventory.getStackInSlot(0);
-                            Item item = itemStack.getItem();
-                            if (item == Items.AIR||itemStack.is(ItemTags.HOES)||itemStack.is(ItemTags.AXES)) {
-                                selectedGolam.addAssignedBlock(pos, item);
-                                golamInterface.addAssignedGolams(selectedGolam.getUUID());
+                            Item interfaceItem = itemStack.getItem();
+                            if (interfaceItem == Items.AIR
+                                ||(itemStack.is(ItemTags.HOES) && selectedGolam.assignedTool.builtInRegistryHolder().is(ItemTags.HOES))
+                                ||(itemStack.is(ItemTags.AXES)) && selectedGolam.assignedTool.builtInRegistryHolder().is(ItemTags.AXES)){
+                                selectedGolam.addAssignedBlock(pos, interfaceItem);
                                 selectedGolam.updateGoals();
                                 selectedGolam = null;
                                 player.getCooldowns().addCooldown(this, 5);
+                                player.displayClientMessage(Component.translatable(
+                                        "interaction.golams.golam_core_assign_step_2",
+                                        Component.translatable("block.golams.golam_interface"),
+                                        String.valueOf(pos.getX()),
+                                        String.valueOf(pos.getY()),
+                                        String.valueOf(pos.getZ()),
+                                        Component.translatable(interfaceItem.getDescriptionId())
+                                ), true);
                                 return InteractionResult.SUCCESS;
                             } else return InteractionResult.PASS;
                         }
                         if (    //CROPS
-                                block.getBlock().defaultBlockState().is(BlockTags.CROPS)
+                                (block.getBlock().defaultBlockState().is(BlockTags.CROPS)
                                 ||block.getBlock()==Blocks.SWEET_BERRY_BUSH
                                 ||block.getBlock()==Blocks.TORCHFLOWER
                                 ||block.getBlock()==Blocks.COCOA
                                 ||block.getBlock()==Blocks.NETHER_WART
                                 ||block.getBlock()==Blocks.ATTACHED_MELON_STEM
                                 ||block.getBlock()== Blocks.ATTACHED_PUMPKIN_STEM
-                                ||block.getBlock()== Blocks.COMPOSTER
-
-
+                                ||block.getBlock()== Blocks.COMPOSTER)
+                                && selectedGolam.assignedTool.builtInRegistryHolder().is(ItemTags.HOES)
+                                ||
                                 //TREES
-                                ||block.getBlock().defaultBlockState().is(BlockTags.SAPLINGS)&&!block.getBlock().defaultBlockState().is(Blocks.MANGROVE_PROPAGULE)
+                                (block.getBlock().defaultBlockState().is(BlockTags.SAPLINGS)&&!block.getBlock().defaultBlockState().is(Blocks.MANGROVE_PROPAGULE)
                                 ||block.getBlock()==Blocks.BROWN_MUSHROOM
                                 ||block.getBlock()==Blocks.RED_MUSHROOM
                                 ||block.getBlock()==Blocks.CRIMSON_FUNGUS
-                                ||block.getBlock()==Blocks.WARPED_FUNGUS
+                                ||block.getBlock()==Blocks.WARPED_FUNGUS)
+                                && selectedGolam.assignedTool.builtInRegistryHolder().is(ItemTags.AXES)
 
                                 //BEES
                                 /*||block.getBlock()==Blocks.BEE_NEST
                                 ||block.getBlock()==Blocks.BEEHIVE*/
-                        ){
+                        ) {
                             Item item;
-                            if (block.getBlock()== Blocks.ATTACHED_MELON_STEM){
-                                    item = Items.MELON_SEEDS;
-                            } else if (block.getBlock()== Blocks.ATTACHED_PUMPKIN_STEM){
+                            if (block.getBlock() == Blocks.ATTACHED_MELON_STEM) {
+                                item = Items.MELON_SEEDS;
+                            } else if (block.getBlock() == Blocks.ATTACHED_PUMPKIN_STEM) {
                                 item = Items.PUMPKIN_SEEDS;
-                            } else if (block.getBlock()== Blocks.TORCHFLOWER){
+                            } else if (block.getBlock() == Blocks.TORCHFLOWER) {
                                 item = Items.TORCHFLOWER_SEEDS;
                             } else {
                                 item = block.getBlock().asItem();
@@ -212,10 +233,10 @@ public class GolamCore extends Item {
 
                             player.getCooldowns().addCooldown(this, 5);
                             return InteractionResult.SUCCESS;
-
                         }
                     default:return InteractionResult.PASS;
                     }
+
                 }
 
             if (state.is(Blocks.BUDDING_AMETHYST)) {
