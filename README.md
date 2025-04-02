@@ -8,11 +8,15 @@ Golams are the hidden spirits of Geodes, made of a budding Amethyst, this creatu
 
 once you'll spawn your first Golam, **shift-left-click** on it to take it in your inventory.
 
+---
+
 ## Golam professions :
 
 ![Golams professions recipes](https://media.forgecdn.net/attachments/1134/784/golam_profession_craft-png.png)
 
 *   _Upgrading unassigned Golams to professions Golams._
+
+---
 
 ### Blacksmith Golam :
 
@@ -24,6 +28,8 @@ once you'll spawn your first Golam, **shift-left-click** on it to take it in you
 
 _(in the future it will be able to craft Golams without budding amethyst, WIP!)_
 
+---
+
 ### Cartographer Golam :
 
 *   The cartographer golam can points to the direction of interests points on the maps given to him when right clicked with a Golam Core. If close enough the golam will stand at coordinates given on the map, revealing treasures!
@@ -31,6 +37,8 @@ _(in the future it will be able to craft Golams without budding amethyst, WIP!)_
 ![Cartographer usage](https://media.forgecdn.net/attachments/1140/229/cartographeruse_270325_0447-ezgif-com-optiwebp.webp)
 
 *   _Finding treasures with Cartographer Golam !_
+
+---
 
 ### Deliverer Golam :
 
@@ -40,6 +48,8 @@ _(in the future it will be able to craft Golams without budding amethyst, WIP!)_
 
 *   _Sorting logs and sticks with Deliverer Golam_
 
+---
+
 ### Guard Golam :
 
 *   The guard golam can defend others Golams against hostile mobs, including you ! take care of this robust variant who's 2 times more resistant than its friends ! they will naturally follow others non guards golams when there is no menace.
@@ -48,6 +58,28 @@ _(in the future it will be able to craft Golams without budding amethyst, WIP!)_
 ![guard golam](https://media.forgecdn.net/attachments/1144/552/guard_golam-webp.webp)
 
 *   _Bad zombies !_
+
+---
+
+### Harvester Golam :
+
+*   The Harvester Golam can harvest crops and trees !
+
+    Give it a tool and assign it to saplings or crops. Once they'll grow, harvester golam will harvest the ressource and replant it !
+
+*   Assignables blocks :
+
+    *   When an axe is given : Vanilla Saplings (excluding Mangrove, WIP!), Red and Brown mushrooms, Crimson and Warped Fungus, Bamboo, Golam Interface (empty, #minecraft:axes).
+    *   When a hoe is given : Vanilla crops, cacao beans, cactus, sugar cane, Golam Interface (empty, #minecraft:hoes).
+
+
+
+![harvester golam](https://media.forgecdn.net/attachments/1146/34/harvester_golam_crops_demo-webp.webp)
+
+*   _Harvesting crops with Harvester Golam !_
+
+
+---
 
 Downloads : 
 ==========

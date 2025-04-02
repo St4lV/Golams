@@ -14,7 +14,7 @@ import net.minecraft.util.Mth;
 
 public class HarvesterGolamModel extends GolamModel<GolamEntity> {
     public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
-            ResourceLocation.fromNamespaceAndPath(Golams.MODID, "blacksmith_golam"), "main"
+            ResourceLocation.fromNamespaceAndPath(Golams.MODID, "harvester_golam"), "main"
     );
 
     private final ModelPart body;
