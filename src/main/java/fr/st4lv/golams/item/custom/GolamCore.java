@@ -178,7 +178,7 @@ public class GolamCore extends Item {
 
 
                                 //TREES
-                                ||block.getBlock().defaultBlockState().is(BlockTags.SAPLINGS)
+                                ||block.getBlock().defaultBlockState().is(BlockTags.SAPLINGS)&&!block.getBlock().defaultBlockState().is(Blocks.MANGROVE_PROPAGULE)
                                 ||block.getBlock()==Blocks.BROWN_MUSHROOM
                                 ||block.getBlock()==Blocks.RED_MUSHROOM
                                 ||block.getBlock()==Blocks.CRIMSON_FUNGUS

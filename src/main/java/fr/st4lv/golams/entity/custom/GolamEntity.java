@@ -70,7 +70,7 @@ public class GolamEntity extends AbstractGolem implements InventoryCarrier, Neut
     private boolean persistenceRequired;
     private final List<AssignedBlock> assignedBlocks = new ArrayList<>();
     public boolean shouldCompost;
-    public Item assignedTool = Items.AIR;
+    public Item assignedTool;
 
     private static final EntityDataAccessor<String> GOLAM_PROFESSION =
             SynchedEntityData.defineId(GolamEntity.class, EntityDataSerializers.STRING);
@@ -323,6 +323,7 @@ public class GolamEntity extends AbstractGolem implements InventoryCarrier, Neut
     @Override
     public void addAdditionalSaveData(@NotNull CompoundTag compound) {
         super.addAdditionalSaveData(compound);
+        compound.putString("assigned_tool", BuiltInRegistries.ITEM.getKey(assignedTool).toString());
         compound.putString("golam_profession", this.getTypeVariant().getProfessionName());
         compound.putBoolean("PersistenceRequired", true);
 
@@ -355,6 +356,8 @@ public class GolamEntity extends AbstractGolem implements InventoryCarrier, Neut
     @Override
     public void readAdditionalSaveData(@NotNull CompoundTag compound) {
         super.readAdditionalSaveData(compound);
+        this.assignedTool = BuiltInRegistries.ITEM.get(ResourceLocation.tryParse(compound.getString("assigned_tool")));
+
         this.setVariant(GolamProfessions.byName(compound.getString("golam_profession")));
         this.persistenceRequired = compound.getBoolean("PersistenceRequired");
 

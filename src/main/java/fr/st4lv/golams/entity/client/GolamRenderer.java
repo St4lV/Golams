@@ -9,23 +9,24 @@ import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Objects;
-
 public class GolamRenderer extends MobRenderer<GolamEntity, GolamModel<GolamEntity>> {
+
+    private final BlacksmithGolamModel blacksmithModel;
     private final CartographerGolamModel cartographerModel;
     private final DelivererGolamModel delivererModel;
     private final GuardGolamModel guardModel;
-    private final BlacksmithGolamModel blacksmithModel;
+    private final HarvesterGolamModel harvesterModel;
     private final GolamModel defaultModel;
 
     public GolamRenderer(EntityRendererProvider.Context context) {
         super(context, new GolamModel<>(context.bakeLayer(GolamModel.LAYER_LOCATION)), 0.25f);
 
+        this.blacksmithModel = new BlacksmithGolamModel(context.bakeLayer(BlacksmithGolamModel.LAYER_LOCATION));
         this.cartographerModel = new CartographerGolamModel(context.bakeLayer(CartographerGolamModel.LAYER_LOCATION));
         this.delivererModel = new DelivererGolamModel(context.bakeLayer(DelivererGolamModel.LAYER_LOCATION));
         this.guardModel = new GuardGolamModel(context.bakeLayer(GuardGolamModel.LAYER_LOCATION));
-        this.blacksmithModel = new BlacksmithGolamModel(context.bakeLayer(BlacksmithGolamModel.LAYER_LOCATION));
-        this.defaultModel = new CartographerGolamModel(context.bakeLayer(GolamModel.LAYER_LOCATION));
+        this.harvesterModel = new HarvesterGolamModel(context.bakeLayer(HarvesterGolamModel.LAYER_LOCATION));
+        this.defaultModel = new GolamModel(context.bakeLayer(GolamModel.LAYER_LOCATION));
     }
 
     @Override
@@ -35,11 +36,12 @@ public class GolamRenderer extends MobRenderer<GolamEntity, GolamModel<GolamEnti
     }
 
     @Override
-    public void render(GolamEntity entity, float entityYaw, float partialTicks, PoseStack poseStack, MultiBufferSource buffer, int packedLight) {
+    public void render(GolamEntity entity, float entityYaw, float partialTicks, @NotNull PoseStack poseStack, @NotNull MultiBufferSource buffer, int packedLight) {
         this.model = switch (entity.getTypeVariant()) {
             case BLACKSMITH -> blacksmithModel;
             case CARTOGRAPHER -> cartographerModel;
             case DELIVERER -> delivererModel;
+            case HARVESTER -> harvesterModel;
             case GUARD -> guardModel;
 
             default -> defaultModel;

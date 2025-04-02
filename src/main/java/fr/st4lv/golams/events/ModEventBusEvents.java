@@ -18,6 +18,7 @@ public class ModEventBusEvents {
         event.registerLayerDefinition(CartographerGolamModel.LAYER_LOCATION, CartographerGolamModel::createBodyLayer);
         event.registerLayerDefinition(DelivererGolamModel.LAYER_LOCATION, DelivererGolamModel::createBodyLayer);
         event.registerLayerDefinition(GuardGolamModel.LAYER_LOCATION, GuardGolamModel::createBodyLayer);
+        event.registerLayerDefinition(HarvesterGolamModel.LAYER_LOCATION, HarvesterGolamModel::createBodyLayer);
     }
     @SubscribeEvent
     public static void registerAttributes(EntityAttributeCreationEvent event) {

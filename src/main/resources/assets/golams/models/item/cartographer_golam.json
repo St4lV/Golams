@@ -1,5 +1,5 @@
 {
-	"credit": "Made with Blockbench",
+	"credit": "Made with Blockbench, Model and texture by st4l (mod author)",
 	"texture_size": [64, 64],
 	"textures": {
 		"0": "golams:item/cartographer_golam",

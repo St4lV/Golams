@@ -7,6 +7,7 @@ import net.minecraft.world.Container;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.ChestBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -33,6 +34,7 @@ public class RestockToolGoal extends Goal {
             cooldown--;
             return false;
         }
+        if(entity.assignedTool== Items.AIR)return false;
         targetBlock = entity.findAssignedItemGolamInterface(entity.assignedTool);
         cooldown = 80;
         return targetBlock != null;
@@ -73,7 +75,7 @@ public class RestockToolGoal extends Goal {
 
         for (int i = 0; i < chest.getContainerSize(); i++) {
             ItemStack stack = chest.getItem(i);
-            if (!stack.isEmpty() && stack.getItem() == entity.assignedTool) {
+            if (!stack.isEmpty() && stack.getItem() == entity.assignedTool && entity.getItemBySlot(EquipmentSlot.MAINHAND).isEmpty()) {
                 entity.setItemSlot(EquipmentSlot.MAINHAND, stack.split(1));
                 break;
             }

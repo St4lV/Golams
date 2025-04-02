@@ -185,6 +185,7 @@ public class HarvestAssignedRessourcesGoal extends Goal {
                     }
                     harvesting=false;
                     itemstack.setDamageValue((itemstack.getDamageValue())+1);
+                    entity.playSound(SoundEvents.CROP_BREAK, 1.0F, 1.0F);
                 }
                  }
             if (itemstack.is(ItemTags.AXES)){
