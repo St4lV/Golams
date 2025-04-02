@@ -77,6 +77,11 @@ public class HarvestAssignedRessourcesGoal extends Goal {
                         return pos;
                     }
                 }
+                if (blockState.is(Blocks.SUGAR_CANE)){
+                    if (entity.level().getBlockState(pos.above()).is(Blocks.SUGAR_CANE)) {
+                        return pos;
+                    }
+                }
                 if (    blockState.is(BlockTags.CROPS)
                         ||blockState.getBlock()==Blocks.SWEET_BERRY_BUSH
                         ||blockState.getBlock()==Blocks.TORCHFLOWER
@@ -160,8 +165,15 @@ public class HarvestAssignedRessourcesGoal extends Goal {
                         breakBlockAbove(targetBlock, level, serverLevel, drops);
                     }
                 }
+                if(blockState.is(Blocks.SUGAR_CANE)){
+                    drops.clear();
+                    BlockState aboveBlockstate = level.getBlockState(targetBlock.above());
+                    if (aboveBlockstate.is(Blocks.SUGAR_CANE)){
+                        breakBlockAbove(targetBlock, level, serverLevel, drops);
+                    }
+                }
                 level.setBlock(targetBlock,blockState,3);
-                if (    (blockState.is(BlockTags.CROPS) && !blockState.is(Blocks.CACTUS))
+                if (    (blockState.is(BlockTags.CROPS) && !blockState.is(Blocks.CACTUS) && !blockState.is(Blocks.SUGAR_CANE))
                         ||blockState.getBlock()==Blocks.SWEET_BERRY_BUSH
                         ||blockState.getBlock()==Blocks.TORCHFLOWER
                         ||blockState.getBlock()==Blocks.COCOA
@@ -369,7 +381,6 @@ public class HarvestAssignedRessourcesGoal extends Goal {
                 }
             }
             if (itemstack.getDamageValue()>=itemstack.getMaxDamage()){
-                System.out.println(itemstack.getDamageValue()+" | "+itemstack.getMaxDamage());
                 entity.setItemSlot(EquipmentSlot.MAINHAND,ItemStack.EMPTY);
                 entity.playSound(SoundEvents.ITEM_BREAK, 1.0F, 1.0F);
                 cooldown=100;

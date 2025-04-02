@@ -70,7 +70,7 @@ public class GolamEntity extends AbstractGolem implements InventoryCarrier, Neut
     private boolean persistenceRequired;
     private final List<AssignedBlock> assignedBlocks = new ArrayList<>();
     public boolean shouldCompost;
-    public Item assignedTool;
+    public Item assignedTool = Items.AIR;
 
     private static final EntityDataAccessor<String> GOLAM_PROFESSION =
             SynchedEntityData.defineId(GolamEntity.class, EntityDataSerializers.STRING);

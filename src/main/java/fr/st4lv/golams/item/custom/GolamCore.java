@@ -194,7 +194,8 @@ public class GolamCore extends Item {
                                 ||block.getBlock()==Blocks.NETHER_WART
                                 ||block.getBlock()==Blocks.ATTACHED_MELON_STEM
                                 ||block.getBlock()== Blocks.ATTACHED_PUMPKIN_STEM
-                                ||block.getBlock()== Blocks.CACTUS)
+                                ||block.getBlock()== Blocks.CACTUS
+                                ||block.getBlock()== Blocks.SUGAR_CANE)
                                 && selectedGolam.assignedTool.builtInRegistryHolder().is(ItemTags.HOES)
                                 ||
                                 //TREES
