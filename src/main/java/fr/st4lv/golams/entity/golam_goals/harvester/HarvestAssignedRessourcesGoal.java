@@ -72,6 +72,11 @@ public class HarvestAssignedRessourcesGoal extends Goal {
             ItemStack itemstack = entity.getItemBySlot(EquipmentSlot.MAINHAND);
             //CROPS
             if (itemstack.is(ItemTags.HOES)){
+                if (blockState.is(Blocks.CACTUS)){
+                    if (entity.level().getBlockState(pos.above()).is(Blocks.CACTUS)) {
+                        return pos;
+                    }
+                }
                 if (    blockState.is(BlockTags.CROPS)
                         ||blockState.getBlock()==Blocks.SWEET_BERRY_BUSH
                         ||blockState.getBlock()==Blocks.TORCHFLOWER
@@ -115,6 +120,11 @@ public class HarvestAssignedRessourcesGoal extends Goal {
                 }
             }
             else if (itemstack.is(ItemTags.AXES)) {
+                if (blockState.is(Blocks.BAMBOO)){
+                    if (entity.level().getBlockState(pos.above()).is(Blocks.BAMBOO)) {
+                        return pos;
+                    }
+                }
                 if (blockState.is(BlockTags.LOGS)|| blockState.is(Blocks.MUSHROOM_STEM)) {
                     return pos;
                 }
@@ -143,7 +153,15 @@ public class HarvestAssignedRessourcesGoal extends Goal {
             ItemStack itemstack = entity.getItemBySlot(EquipmentSlot.MAINHAND);
             List<ItemStack> drops = Block.getDrops(blockState, serverLevel, targetBlock, level.getBlockEntity(targetBlock), entity, ItemStack.EMPTY);
             if (itemstack.is(ItemTags.HOES)){
-                if (    blockState.is(BlockTags.CROPS)
+                if(blockState.is(Blocks.CACTUS)){
+                    drops.clear();
+                    BlockState aboveBlockstate = level.getBlockState(targetBlock.above());
+                    if (aboveBlockstate.is(Blocks.CACTUS)){
+                        breakBlockAbove(targetBlock, level, serverLevel, drops);
+                    }
+                }
+                level.setBlock(targetBlock,blockState,3);
+                if (    (blockState.is(BlockTags.CROPS) && !blockState.is(Blocks.CACTUS))
                         ||blockState.getBlock()==Blocks.SWEET_BERRY_BUSH
                         ||blockState.getBlock()==Blocks.TORCHFLOWER
                         ||blockState.getBlock()==Blocks.COCOA
@@ -187,8 +205,18 @@ public class HarvestAssignedRessourcesGoal extends Goal {
                     itemstack.setDamageValue((itemstack.getDamageValue())+1);
                     entity.playSound(SoundEvents.CROP_BREAK, 1.0F, 1.0F);
                 }
-                 }
+            }
             if (itemstack.is(ItemTags.AXES)){
+
+                if(blockState.is(Blocks.BAMBOO)){
+                    drops.clear();
+                    BlockState aboveBlockstate = level.getBlockState(targetBlock.above());
+                    if (aboveBlockstate.is(Blocks.BAMBOO)){
+                        breakBlockAbove(targetBlock, level, serverLevel, drops);
+                    }
+                    level.setBlock(targetBlock,blockState,3);
+                }
+
                 if (blockState.is(BlockTags.LOGS)|| blockState.is(Blocks.MUSHROOM_STEM)) {
 
                     //LOGS / STEMS
@@ -341,6 +369,7 @@ public class HarvestAssignedRessourcesGoal extends Goal {
                 }
             }
             if (itemstack.getDamageValue()>=itemstack.getMaxDamage()){
+                System.out.println(itemstack.getDamageValue()+" | "+itemstack.getMaxDamage());
                 entity.setItemSlot(EquipmentSlot.MAINHAND,ItemStack.EMPTY);
                 entity.playSound(SoundEvents.ITEM_BREAK, 1.0F, 1.0F);
                 cooldown=100;
@@ -373,4 +402,25 @@ public class HarvestAssignedRessourcesGoal extends Goal {
         Block block = state.getBlock();
         return level.getBlockState(pos.offset(xOffset, 0, yOffset)).is(block) && level.getBlockState(pos.offset(xOffset + 1, 0, yOffset)).is(block) && level.getBlockState(pos.offset(xOffset, 0, yOffset + 1)).is(block) && level.getBlockState(pos.offset(xOffset + 1, 0, yOffset + 1)).is(block);
     }
+
+    private void breakBlockAbove(BlockPos pos, Level level, ServerLevel serverLevel, List<ItemStack> drops) {
+        int startLooting = 1;
+        BlockPos topBlockPos = pos;
+        while (level.getBlockState(topBlockPos.above()).is(level.getBlockState(pos).getBlock())) {
+            topBlockPos = topBlockPos.above();
+        }
+
+        for (BlockPos currentPos = topBlockPos; currentPos.getY() >= pos.getY(); currentPos = currentPos.below()) {
+            BlockState currentState = level.getBlockState(currentPos);
+            List<ItemStack> blockDrops = Block.getDrops(currentState, serverLevel, currentPos, level.getBlockEntity(currentPos), entity, ItemStack.EMPTY);
+            level.destroyBlock(currentPos, false);
+            if (startLooting==0) {
+                drops.addAll(blockDrops);
+            }
+            ItemStack itemstack = entity.getItemBySlot(EquipmentSlot.MAINHAND);
+            itemstack.setDamageValue((itemstack.getDamageValue())+1);
+            startLooting=0;
+        }
+    }
+
 }

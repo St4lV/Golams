@@ -194,7 +194,7 @@ public class GolamCore extends Item {
                                 ||block.getBlock()==Blocks.NETHER_WART
                                 ||block.getBlock()==Blocks.ATTACHED_MELON_STEM
                                 ||block.getBlock()== Blocks.ATTACHED_PUMPKIN_STEM
-                                ||block.getBlock()== Blocks.COMPOSTER)
+                                ||block.getBlock()== Blocks.CACTUS)
                                 && selectedGolam.assignedTool.builtInRegistryHolder().is(ItemTags.HOES)
                                 ||
                                 //TREES
@@ -202,7 +202,8 @@ public class GolamCore extends Item {
                                 ||block.getBlock()==Blocks.BROWN_MUSHROOM
                                 ||block.getBlock()==Blocks.RED_MUSHROOM
                                 ||block.getBlock()==Blocks.CRIMSON_FUNGUS
-                                ||block.getBlock()==Blocks.WARPED_FUNGUS)
+                                ||block.getBlock()==Blocks.WARPED_FUNGUS
+                                ||block.getBlock()==Blocks.BAMBOO)
                                 && selectedGolam.assignedTool.builtInRegistryHolder().is(ItemTags.AXES)
 
                                 //BEES
